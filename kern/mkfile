@@ -1,0 +1,47 @@
+<$DSRC/mkfile-$CONF
+TARG=libkern.$L
+
+OFILES=\
+	allocb.$O\
+	cache.$O\
+	chan.$O\
+	data.$O\
+	dev.$O\
+	devcons.$O\
+	devdraw.$O\
+	devip.$O\
+	devmnt.$O\
+	devmouse.$O\
+	devpipe.$O\
+	devroot.$O\
+	devssl.$O\
+	devtab.$O\
+	error.$O\
+	parse.$O\
+	pgrp.$O\
+	procinit.$O\
+	rwlock.$O\
+	sleep.$O\
+	smalloc.$O\
+	stub.$O\
+	sysfile.$O\
+	sysproc.$O\
+	qio.$O\
+	qlock.$O\
+	term.$O\
+	todo.$O\
+	uart.$O\
+	waserror.$O\
+	$DEVIP.$O\
+	$OSHOOKS.$O\
+	$DEVFS.$O
+
+HFILE=\
+	dat.h\
+	devip.h\
+	error.h\
+	fns.h\
+	netif.h\
+	screen.h
+
+<$DSRC/mklib-$CONF

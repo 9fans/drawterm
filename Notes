@@ -1,0 +1,16 @@
+
+Win32 port Notes:
+
+* Issues:
+
+	** ownership questions on files are completely deferred by
+	marking them as unknown.  It works for now, but probably
+	should be handled correctly.
+
+	** No performance measurements have been done.  The interactive
+	response seems faster than old drawterm, but the i/o seems
+	slower.
+
+	** fs functions in devntfs.c need to handle conversions to/from
+	widechar and utf-8.
+

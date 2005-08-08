@@ -1,0 +1,9 @@
+CC=gcc
+objtype=`{uname -m|sed 's/i.86/386/;s/Power Macintosh/power/'}
+CFLAGS=-I$DSRC/include -c -ggdb -D_THREAD_SAFE -pthread # not ready for this yet: -Wall
+LDFLAGS=-pthread -L/usr/X11R6/lib -lX11 -ggdb
+O=o
+L=a
+SYS=posix
+#OS=FreeBSD
+OSHOOKS=posix

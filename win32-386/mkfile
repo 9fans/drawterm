@@ -1,0 +1,10 @@
+<$DSRC/mkfile-$CONF
+TARG=libmachdep.$L
+
+OFILES=\
+	getcallerpc.$O\
+	tas.$O
+
+HFILES=\
+
+<$DSRC/mklib-$CONF
