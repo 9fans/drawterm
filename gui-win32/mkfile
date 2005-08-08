@@ -1,0 +1,14 @@
+<$DSRC/mkfile-$CONF
+TARG=libgui.$L
+
+OFILES=\
+	alloc.$O\
+	cload.$O\
+	draw.$O\
+	load.$O\
+	screen.$O\
+	wstrtoutf.$O
+
+HFILES=\
+
+<$DSRC/mklib-$CONF

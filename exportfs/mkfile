@@ -1,0 +1,11 @@
+<$DSRC/mkfile-$CONF
+TARG=libexportfs.$L
+
+OFILES=\
+	exportfs.$O\
+	exportsrv.$O
+
+HFILES=\
+	exportfs.h
+
+<$DSRC/mklib-$CONF

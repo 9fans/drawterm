@@ -1,0 +1,18 @@
+<$DSRC/mkfile-$CONF
+TARG=libdraw.$L
+
+OFILES=\
+	alloc.$O\
+	arith.$O\
+	bytesperline.$O\
+	chan.$O\
+	defont.$O\
+	drawrepl.$O\
+	icossin.$O\
+	icossin2.$O\
+	rectclip.$O\
+	rgb.$O
+
+HFILES=\
+
+<$DSRC/mklib-$CONF
