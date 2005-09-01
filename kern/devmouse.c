@@ -8,7 +8,7 @@
 #include	"memdraw.h"
 #include	"screen.h"
 
-int	mousequeue;
+int	mousequeue = 1;
 
 Mouseinfo	mouse;
 Cursorinfo	cursor;
