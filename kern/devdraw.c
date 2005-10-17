@@ -183,6 +183,24 @@ static	char Eoldname[] =	"named image no longer valid";
 static	char Enamed[] = 	"image already has name";
 static	char Ewrongname[] = 	"wrong name for image";
 
+int
+drawcanqlock(void)
+{
+	return canqlock(&sdraw.lk);
+}
+
+void
+drawqlock(void)
+{
+	qlock(&sdraw.lk);
+}
+
+void
+drawqunlock(void)
+{
+	qunlock(&sdraw.lk);
+}
+
 static int
 drawgen(Chan *c, char *name, Dirtab *dt, int ndt, int s, Dir *dp)
 {

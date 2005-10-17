@@ -16,9 +16,9 @@
  */
 #define	Point	IPoint
 #define	Rectangle	IRectangle
-#define Display	IDisplay
-#define Font	IFont
-#define Screen	IScreen
+#define	Display	IDisplay
+#define	Font	IFont
+#define	Screen	IScreen
 
 #include <u.h>
 #include <libc.h>
@@ -81,7 +81,7 @@ static	void		xmouse(XEvent*);
 static	void		xkeyboard(XEvent*);
 static	void		xmapping(XEvent*);
 static	void		xdestroy(XEvent*);
-static	void		xselect(XEvent*);
+static	void		xselect(XEvent*, Display*);
 static	void		xproc(void*);
 static	Memimage*		xinitscreen(void);
 static	void		initmap(Window);
@@ -89,16 +89,18 @@ static	GC		creategc(Drawable);
 static	void		graphicscmap(XColor*);
 	int		xscreendepth;
 	Drawable	xscreenid;
-	Display*	xdisplay;
-	Display*	xkmcon;
-	Display*	xsnarfcon;
+	Display*	xdisplay;	/* used holding draw lock */
+	Display*	xkmcon;	/* used only in xproc */
+	Display*	xsnarfcon;	/* used holding clip.lk */
 	Visual		*xvis;
 	GC		xgcfill, xgccopy, xgcsimplesrc, xgczero, xgcreplsrc;
 	GC		xgcfill0, xgccopy0, xgcsimplesrc0, xgczero0, xgcreplsrc0;
 	ulong		xblack;
 	ulong		xwhite;
 	ulong	xscreenchan;
-	
+
+static int putsnarf, assertsnarf;
+
 extern Memimage* xallocmemimage(IRectangle, ulong, int);
 Memimage *gscreen;
 Screeninfo screen;
@@ -134,6 +136,7 @@ attachscreen(IRectangle *r, ulong *chan, int *depth,
 void
 flushmemscreen(IRectangle r)
 {
+	assert(!drawcanqlock());
 	if(r.min.x >= r.max.x || r.min.y >= r.max.y)
 		return;
 	XCopyArea(xdisplay, xscreenid, xdrawable, xgccopy, r.min.x, r.min.y, Dx(r), Dy(r), r.min.x, r.min.y);
@@ -160,8 +163,10 @@ revbyte(int b)
 void
 mouseset(IPoint xy)
 {
+	drawqlock();
 	XWarpPointer(xdisplay, None, xdrawable, 0, 0, 0, 0, xy.x, xy.y);
 	XFlush(xdisplay);
+	drawqunlock();
 }
 
 static Cursor xcursor;
@@ -180,6 +185,7 @@ setcursor(void)
 		mask[i] = revbyte(cursor.set[i] | cursor.clr[i]);
 	}
 
+	drawqlock();
 	fg = map[0];
 	bg = map[255];
 	xsrc = XCreateBitmapFromData(xdisplay, xdrawable, src, 16, 16);
@@ -194,17 +200,20 @@ setcursor(void)
 	XFreePixmap(xdisplay, xsrc);
 	XFreePixmap(xdisplay, xmask);
 	XFlush(xdisplay);
+	drawqunlock();
 }
 
 void
 cursorarrow(void)
 {
+	drawqlock();
 	if(xcursor != 0){
 		XFreeCursor(xdisplay, xcursor);
 		xcursor = 0;
 	}
 	XUndefineCursor(xdisplay, xdrawable);
 	XFlush(xdisplay);
+	drawqunlock();
 }
 
 static void
@@ -229,7 +238,7 @@ xproc(void *arg)
 	for(;;) {
 		//XWindowEvent(xkmcon, xdrawable, mask, &event);
 		XNextEvent(xkmcon, &event);
-		xselect(&event);
+		xselect(&event, xkmcon);
 		xkeyboard(&event);
 		xmouse(&event);
 		xexpose(&event);
@@ -464,11 +473,11 @@ xinitscreen(void)
 		exit(0);
 	}
 
-    clipboard = XInternAtom(xkmcon, "CLIPBOARD", False);
-    utf8string = XInternAtom(xkmcon, "UTF8_STRING", False);
-    targets = XInternAtom(xkmcon, "TARGETS", False);
-    text = XInternAtom(xkmcon, "TEXT", False);
-    compoundtext = XInternAtom(xkmcon, "COMPOUND_TEXT", False);
+	clipboard = XInternAtom(xkmcon, "CLIPBOARD", False);
+	utf8string = XInternAtom(xkmcon, "UTF8_STRING", False);
+	targets = XInternAtom(xkmcon, "TARGETS", False);
+	text = XInternAtom(xkmcon, "TEXT", False);
+	compoundtext = XInternAtom(xkmcon, "COMPOUND_TEXT", False);
 
 	xblack = screen->black_pixel;
 	xwhite = screen->white_pixel;
@@ -625,13 +634,6 @@ xdestroy(XEvent *e)
 }
 
 static void
-xselection(XEvent *e)
-{
-	XSelectionRequestEvent *xre;
-	XSelectionEvent *xe;
-}
-
-static void
 xmapping(XEvent *e)
 {
 	XMappingEvent *xe;
@@ -691,7 +693,7 @@ xkeyboard(XEvent *e)
 		return;
 
 
-	XLookupString(e,NULL,0,&k,NULL);
+	XLookupString((XKeyEvent*)e, NULL, 0, &k, NULL);
 
 	if(k == XK_Multi_key || k == NoSymbol)
 		return;
@@ -781,12 +783,14 @@ xkeyboard(XEvent *e)
 		case XK_Super_R:
 		case XK_Hyper_L:
 		case XK_Hyper_R:
-            return;
+			return;
 		default:		/* not ISO-1 or tty control */
-  			if(k>0xff) {
-                k = keysym2ucs(k); /* supplied by X */
-                if(k == -1) return;
-           	}
+  			if(k>0xff){
+				k = keysym2ucs(k); /* supplied by X */
+				if(k == -1)
+					return;
+			}
+			break;
 		}
 	}
 
@@ -811,9 +815,27 @@ xmouse(XEvent *e)
 	XButtonEvent *be;
 	XMotionEvent *me;
 
+	if(putsnarf != assertsnarf){
+		assertsnarf = putsnarf;
+		XSetSelectionOwner(xkmcon, XA_PRIMARY, xdrawable, CurrentTime);
+		if(clipboard != None)
+			XSetSelectionOwner(xkmcon, clipboard, xdrawable, CurrentTime);
+		XFlush(xkmcon);
+	}
+
 	switch(e->type){
 	case ButtonPress:
 		be = (XButtonEvent *)e;
+		/* 
+		 * Fake message, just sent to make us announce snarf.
+		 * Apparently state and button are 16 and 8 bits on
+		 * the wire, since they are truncated by the time they
+		 * get to us.
+		 */
+		if(be->send_event
+		&& (~be->state&0xFFFF)==0
+		&& (~be->button&0xFF)==0)
+			return;
 		ms.xy.x = be->x;
 		ms.xy.y = be->y;
 		s = be->state;
@@ -921,153 +943,15 @@ setcolor(ulong i, ulong r, ulong g, ulong b)
 	/* no-op */
 }
 
-typedef struct Clip	Clip;
-struct Clip
-{
-	char buf[SnarfSize];
-	ulong n;
-	int want, have;
-	QLock lk;
-	Rendez vous;
-};
-
-Clip clip;
-
-enum {
-	Chunk = 2048
-};
-
-static void
-xselect(XEvent *e)
-{
-	XSelectionRequestEvent *q;
-	XEvent r;
-	Atom a[4];
-	char *name;
-
-
-	if(e->type != SelectionRequest)
-		return;
-
-	/*
-	 * The lock is around the whole routine because we use the 
-	 * lock to make sure two people aren't sending on xkmcon
-	 * at once.
-	 */
-	q = (XSelectionRequestEvent*)e;
-
-    r.xselection.property = q->property;
-    if(q->target == targets) {
-        a[0] = XA_STRING;
-        a[1] = utf8string;
-        a[2] = text;
-        a[3] = compoundtext;
-
-        XChangeProperty(xkmcon, q->requestor, q->property, q->target,
-            8, PropModeReplace, (uchar*)a, sizeof a);
-    }else if(q->target == XA_STRING || q->target == utf8string || q->target == text || q->target == compoundtext){
-		qlock(&clip.lk);
-		XChangeProperty(xkmcon, q->requestor, q->property, q->target, 8,
-			PropModeReplace, (uchar*)clip.buf, strlen(clip.buf));
-		qunlock(&clip.lk);
-	}else {
-        name = XGetAtomName(xkmcon, q->target);
-        if(strcmp(name, "TIMESTAMP") != 0)
-            fprint(2, "%s: cannot handle selection request for '%s' (%d)\n", argv0, name, (int)q->target);
-		r.xselection.property = None;
-	}
-		
-	r.xselection.type = SelectionNotify;
-	r.xselection.display = q->display;
-	r.xselection.requestor = q->requestor;
-	r.xselection.selection = q->selection;
-	r.xselection.target = q->target;
-	r.xselection.time = q->time;
-	XSendEvent(xkmcon, q->requestor, False, 0, &r);
-	XFlush(xkmcon);
-}
-
-int
-haveclip(void *a)
-{
-	return clip.want == clip.have;
-}
-
-#undef long /* sic */
-char*
-clipread(void)
-{
-	Window w;
-	XEvent e;
-	Atom type;
-	unsigned long len, lleft, left, dummy;
-	int i, fmt, res;
-	uchar *data;
-
-	qlock(&clip.lk);
-	w = XGetSelectionOwner(xsnarfcon, XA_PRIMARY);
-	if(w == xdrawable)
-		data = (uchar*)strdup(clip.buf);
-	else if(w == None)
-		data = nil;
-	else {	
-		/*
-		 * we're supposed to get a notification, but we seem not to,
-		 * so let's just watch and see when the buffer stabilizes.
-		 * if you know how to fix this, mail rsc@plan9.bell-labs.com.
-		 */
-		XChangeProperty(xsnarfcon, xdrawable, XA_PRIMARY, XA_STRING, 8, PropModeReplace,
-		 	(uchar*)"", 0);
-		XConvertSelection(xsnarfcon, XA_PRIMARY, XA_STRING, None, xdrawable, CurrentTime);
-		XFlush(xsnarfcon);
-		for(i=0; i<30; i++){
-		 	osmsleep(100);
-			XGetWindowProperty(xsnarfcon, xdrawable, XA_STRING, 0, 0, 0, AnyPropertyType,
-				&type, &fmt, &len, &left, &data);
-			if(lleft == left && left > 0)
-				break;
-			lleft = left;
-		}
-		if(left > 0){
-			res = XGetWindowProperty(xsnarfcon, xdrawable, XA_STRING, 0, left, 0, 
-				AnyPropertyType, &type, &fmt, &len, &dummy, &data);
-			data = (uchar*)strdup(data);
-		}else
-			data = nil;
-	}
-	qunlock(&clip.lk);
-	return (char*)data;
-}
-
-int
-clipwrite(char *buf)
-{
-	int n;
-
-	n = strlen(buf);
-	qlock(&clip.lk);
-	if(n >= SnarfSize)
-		n = SnarfSize - 1;
-	memmove(clip.buf, buf, n);
-	clip.buf[n] = 0;
-	clip.n = n;
-	/*
-	 * xkmcon so that we get the event in the select loop.  
-	 * It seems to be okay to send a message and read an event
-	 * from a Display* at the same time.  Let's hope so.
-	 */
-	XSetSelectionOwner(xkmcon, XA_PRIMARY, xdrawable, CurrentTime);
-	XFlush(xkmcon);
-	qunlock(&clip.lk);
-	return n;
-}
-#define long int /* sic */
-
 int
 atlocalconsole(void)
 {
 	char *p, *q;
 	char buf[128];
+
+	p = getenv("DRAWTERM_ATLOCALCONSOLE");
+	if(p && atoi(p) == 1)
+		return 1;
 
 	p = getenv("DISPLAY");
 	if(p == nil)
@@ -1089,6 +973,196 @@ atlocalconsole(void)
 		if(strncmp(p, buf, strlen(p)) == 0 && buf[strlen(p)]=='.')
 			return 1;
 	}
-	
+
 	return 0;
 }
+
+/*
+ * Cut and paste.  Just couldn't stand to make this simple...
+ */
+
+typedef struct Clip Clip;
+struct Clip
+{
+	char buf[SnarfSize];
+	QLock lk;
+};
+Clip clip;
+
+#undef long	/* sic */
+#undef ulong
+
+static char*
+_xgetsnarf(Display *xd)
+{
+	uchar *data, *xdata;
+	Atom clipboard, type, prop;
+	ulong len, lastlen, dummy;
+	int fmt, i;
+	Window w;
+
+	qlock(&clip.lk);
+	/*
+	 * Have we snarfed recently and the X server hasn't caught up?
+	 */
+	if(putsnarf != assertsnarf)
+		goto mine;
+
+	/*
+	 * Is there a primary selection (highlighted text in an xterm)?
+	 */
+	clipboard = XA_PRIMARY;
+	w = XGetSelectionOwner(xd, XA_PRIMARY);
+	if(w == xdrawable){
+	mine:
+		data = (uchar*)strdup(clip.buf);
+		goto out;
+	}
+
+	/*
+	 * If not, is there a clipboard selection?
+	 */
+	if(w == None && clipboard != None){
+		clipboard = clipboard;
+		w = XGetSelectionOwner(xd, clipboard);
+		if(w == xdrawable)
+			goto mine;
+	}
+
+	/*
+	 * If not, give up.
+	 */
+	if(w == None){
+		data = nil;
+		goto out;
+	}
+		
+	/*
+	 * We should be waiting for SelectionNotify here, but it might never
+	 * come, and we have no way to time out.  Instead, we will clear
+	 * local property #1, request our buddy to fill it in for us, and poll
+	 * until he's done or we get tired of waiting.
+	 *
+	 * We should try to go for utf8string instead of XA_STRING,
+	 * but that would add to the polling.
+	 */
+	prop = 1;
+	XChangeProperty(xd, xdrawable, prop, XA_STRING, 8, PropModeReplace, (uchar*)"", 0);
+	XConvertSelection(xd, clipboard, XA_STRING, prop, xdrawable, CurrentTime);
+	XFlush(xd);
+	lastlen = 0;
+	for(i=0; i<10 || (lastlen!=0 && i<30); i++){
+		usleep(100*1000);
+		XGetWindowProperty(xd, xdrawable, prop, 0, 0, 0, AnyPropertyType,
+			&type, &fmt, &dummy, &len, &data);
+		if(lastlen == len && len > 0)
+			break;
+		lastlen = len;
+	}
+	if(i == 10){
+		data = nil;
+		goto out;
+	}
+	/* get the property */
+	data = nil;
+	XGetWindowProperty(xd, xdrawable, prop, 0, SnarfSize/sizeof(ulong), 0, 
+		AnyPropertyType, &type, &fmt, &len, &dummy, &xdata);
+	if((type != XA_STRING && type != utf8string) || len == 0){
+		if(xdata)
+			XFree(xdata);
+		data = nil;
+	}else{
+		if(xdata){
+			data = (uchar*)strdup((char*)xdata);
+			XFree(xdata);
+		}else
+			data = nil;
+	}
+out:
+	qunlock(&clip.lk);
+	return (char*)data;
+}
+
+static void
+_xputsnarf(Display *xd, char *data)
+{
+	XButtonEvent e;
+
+	if(strlen(data) >= SnarfSize)
+		return;
+	qlock(&clip.lk);
+	strcpy(clip.buf, data);
+
+	/* leave note for mouse proc to assert selection ownership */
+	putsnarf++;
+
+	/* send mouse a fake event so snarf is announced */
+	memset(&e, 0, sizeof e);
+	e.type = ButtonPress;
+	e.window = xdrawable;
+	e.state = ~0;
+	e.button = ~0;
+	XSendEvent(xd, xdrawable, True, ButtonPressMask, (XEvent*)&e);
+	XFlush(xd);
+	qunlock(&clip.lk);
+}
+
+static void
+xselect(XEvent *e, Display *xd)
+{
+	char *name;
+	XEvent r;
+	XSelectionRequestEvent *xe;
+	Atom a[4];
+
+	memset(&r, 0, sizeof r);
+	xe = (XSelectionRequestEvent*)e;
+if(0) fprint(2, "xselect target=%d requestor=%d property=%d selection=%d\n",
+	xe->target, xe->requestor, xe->property, xe->selection);
+	r.xselection.property = xe->property;
+	if(xe->target == targets){
+		a[0] = XA_STRING;
+		a[1] = utf8string;
+		a[2] = text;
+		a[3] = compoundtext;
+
+		XChangeProperty(xd, xe->requestor, xe->property, xe->target,
+			8, PropModeReplace, (uchar*)a, sizeof a);
+	}else if(xe->target == XA_STRING || xe->target == utf8string || xe->target == text || xe->target == compoundtext){
+		/* if the target is STRING we're supposed to reply with Latin1 XXX */
+		qlock(&clip.lk);
+		XChangeProperty(xd, xe->requestor, xe->property, xe->target,
+			8, PropModeReplace, (uchar*)clip.buf, strlen(clip.buf));
+		qunlock(&clip.lk);
+	}else{
+		name = XGetAtomName(xd, xe->target);
+		if(strcmp(name, "TIMESTAMP") != 0)
+			fprint(2, "%s: cannot handle selection request for '%s' (%d)\n", argv0, name, (int)xe->target);
+		r.xselection.property = None;
+	}
+
+	r.xselection.display = xe->display;
+	/* r.xselection.property filled above */
+	r.xselection.target = xe->target;
+	r.xselection.type = SelectionNotify;
+	r.xselection.requestor = xe->requestor;
+	r.xselection.time = xe->time;
+	r.xselection.send_event = True;
+	r.xselection.selection = xe->selection;
+	XSendEvent(xd, xe->requestor, False, 0, &r);
+	XFlush(xd);
+}
+
+char*
+clipread(void)
+{
+	return _xgetsnarf(xsnarfcon);
+}
+
+int
+clipwrite(char *buf)
+{
+	_xputsnarf(xsnarfcon, buf);
+	return 0;
+}
+
