@@ -55,6 +55,7 @@ screenwin(void)
 	char *greet;
 	Memimage *grey;
 
+	drawqlock();
 	back = memwhite;
 	conscol = memblack;
 	memfillcolor(gscreen, 0x444488FF);
@@ -88,6 +89,7 @@ screenwin(void)
 	curpos = window.min;
 	window.max.y = window.min.y+((window.max.y-window.min.y)/h)*h;
 	flushmemscreen(gscreen->r);
+	drawqunlock();
 }
 
 void
@@ -108,6 +110,7 @@ scroll(void)
 	Point p;
 	Rectangle r;
 
+	drawqlock();
 	o = 8*h;
 	r = Rpt(window.min, Pt(window.max.x, window.max.y-o));
 	p = Pt(window.min.x, window.min.y+o);
@@ -115,8 +118,8 @@ scroll(void)
 	r = Rpt(Pt(window.min.x, window.max.y-o), window.max);
 	memimagedraw(gscreen, r, back, ZP, nil, ZP, S);
 	flushmemscreen(gscreen->r);
-	
 	curpos.y -= o;
+	drawqunlock();
 }
 
 static void
@@ -181,11 +184,12 @@ screenputc(char *buf)
 static void
 termscreenputs(char *s, int n)
 {
-	int i;
+	int i, locked;
 	Rune r;
 	char buf[4];
 
 	lock(&screenlock);
+	locked = drawcanqlock();
 	while(n > 0){
 		i = chartorune(&r, s);
 		if(i == 0){
@@ -199,6 +203,8 @@ termscreenputs(char *s, int n)
 		s += i;
 		screenputc(buf);
 	}
+	if(locked)
+		drawqunlock();
 	screenflush();
 	unlock(&screenlock);
 }
