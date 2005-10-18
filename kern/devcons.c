@@ -147,33 +147,6 @@ putstrn0(char *str, int n, int usewrite)
 			qiwrite(kprintoq, str, n);
 	}else if(screenputs != nil)
 		screenputs(str, n);
-
-	if(serialoq == nil){
-		uartputs(str, n);
-		return;
-	}
-
-	while(n > 0) {
-		t = memchr(str, '\n', n);
-		if(t && !kbd.raw) {
-			m = t-str;
-			if(usewrite){
-				qwrite(serialoq, str, m);
-				qwrite(serialoq, "\r\n", 2);
-			} else {
-				qiwrite(serialoq, str, m);
-				qiwrite(serialoq, "\r\n", 2);
-			}
-			n -= m+1;
-			str = t+1;
-		} else {
-			if(usewrite)
-				qwrite(serialoq, str, n);
-			else
-				qiwrite(serialoq, str, n);
-			break;
-		}
-	}
 }
 
 void

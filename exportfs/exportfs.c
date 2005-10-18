@@ -28,7 +28,7 @@ exportfs(int fd, int msgsz)
 {
 	char buf[ERRMAX], ebuf[ERRMAX];
 	Fsrpc *r;
-	int n;
+	int i, n;
 	char *dbfile, *srv, *file;
 	ulong initial;
 
@@ -85,11 +85,21 @@ exportfs(int fd, int msgsz)
 		DEBUG(DFD, "read9p...");
 		n = read9pmsg(netfd, r->buf, messagesize);
 		if(n <= 0)
-			fatal(nil);
+			fatal("eof: n=%d %r", n);
 
-		if(convM2S(r->buf, n, &r->work) == 0)
+		if(convM2S(r->buf, n, &r->work) == 0){
+			iprint("convM2S %d byte message\n", n);
+			for(i=0; i<n; i++){
+				iprint(" %.2ux", r->buf[i]);
+				if(i%16 == 15)
+					iprint("\n");
+			}
+			if(i%16)
+				iprint("\n");
 			fatal("convM2S format error");
+		}
 
+//iprint("<- %F\n", &r->work);
 		DEBUG(DFD, "%F\n", &r->work);
 		(fcalls[r->work.type])(r);
 	}
@@ -110,6 +120,7 @@ reply(Fcall *r, Fcall *t, char *err)
 	else 
 		t->type = r->type + 1;
 
+//iprint("-> %F\n", t);
 	DEBUG(DFD, "\t%F\n", t);
 
 	data = malloc(messagesize);	/* not mallocz; no need to clear */
@@ -117,7 +128,7 @@ reply(Fcall *r, Fcall *t, char *err)
 		fatal(Enomem);
 	n = convS2M(t, data, messagesize);
 	if((m=write(netfd, data, n))!=n){
-		fprint(2, "wrote %d got %d (%r)\n", n, m);
+		iprint("wrote %d got %d (%r)\n", n, m);
 		fatal("write");
 	}
 	free(data);
