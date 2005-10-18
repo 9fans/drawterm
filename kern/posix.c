@@ -2,6 +2,7 @@
  * Posix generic OS implementation for drawterm.
  */
 
+#define _XOPEN_SOURCE 500
 #include <pthread.h>
 #include <time.h>
 #include <sys/time.h>
@@ -17,7 +18,10 @@
 typedef struct Oproc Oproc;
 struct Oproc
 {
-	int p[2];
+	int nsleep;
+	int nwakeup;
+	pthread_mutex_t mutex;
+	pthread_cond_t cond;
 };
 
 static pthread_key_t prdakey;
@@ -51,10 +55,14 @@ void
 osnewproc(Proc *p)
 {
 	Oproc *op;
+	pthread_mutexattr_t attr;
 
 	op = (Oproc*)p->oproc;
-	if(pipe(op->p) < 0)
-		panic("cannot pipe");
+	pthread_mutexattr_init(&attr);
+	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
+	pthread_mutex_init(&op->mutex, &attr);
+	pthread_mutexattr_destroy(&attr);
+	pthread_cond_init(&op->cond, 0);
 }
 
 void
@@ -130,19 +138,24 @@ procsleep(void)
 
 	p = up;
 	op = (Oproc*)p->oproc;
-	while(read(op->p[0], &c, 1) != 1)
-		;
+	pthread_mutex_lock(&op->mutex);
+	op->nsleep++;
+	while(op->nsleep > op->nwakeup)
+		pthread_cond_wait(&op->cond, &op->mutex);
+	pthread_mutex_unlock(&op->mutex);
 }
 
 void
 procwakeup(Proc *p)
 {
-	char c;
 	Oproc *op;
 
 	op = (Oproc*)p->oproc;
-	c = 'a';
-	write(op->p[1], &c, 1);
+	pthread_mutex_lock(&op->mutex);
+	op->nwakeup++;
+	if(op->nwakeup == op->nsleep)
+		pthread_cond_signal(&op->cond);
+	pthread_mutex_unlock(&op->mutex);
 }
 
 int randfd;
