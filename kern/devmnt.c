@@ -477,8 +477,10 @@ mntstat(Chan *c, uchar *dp, int n)
 	r->request.fid = c->fid;
 	mountrpc(m, r);
 
-	if(r->reply.nstat >= 1<<(8*BIT16SZ))
+/* r->reply.nstat is 16 bits
+	if(r->reply.nstat >= 1<<16)
 		error("returned stat buffer count too large");
+*/
 
 	if(r->reply.nstat > n){
 		/*

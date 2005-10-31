@@ -1,10 +1,6 @@
+ROOT=..
+include ../Make.config
 LIB=libkern.a
-CC=gcc
-CFLAGS=-I../include -I. -c -ggdb -D_THREAD_SAFE -pthread
-O=o
-#CC=cl
-#CFLAGS=-c -nologo -W3 -YX -Zi -MT -Zl -I../include -DWINDOWS
-#O=obj
 
 OFILES=\
 	allocb.$O\
@@ -14,9 +10,9 @@ OFILES=\
 	dev.$O\
 	devcons.$O\
 	devdraw.$O\
-	devfs.$O\
+	devfs-$(OS).$O\
 	devip.$O\
-	devip-posix.$O\
+	devip-$(OS).$O\
 	devmnt.$O\
 	devmouse.$O\
 	devpipe.$O\
@@ -26,7 +22,6 @@ OFILES=\
 	error.$O\
 	parse.$O\
 	pgrp.$O\
-	posix.$O\
 	procinit.$O\
 	rwlock.$O\
 	sleep.$O\
@@ -39,11 +34,12 @@ OFILES=\
 	term.$O\
 	todo.$O\
 	uart.$O\
-	waserror.$O
+	waserror.$O\
+	$(OS).$O
 
 $(LIB): $(OFILES)
-	ar r $(LIB) $(OFILES)
-	ranlib $(LIB)
+	$(AR) r $(LIB) $(OFILES)
+	$(RANLIB) $(LIB)
 
 %.$O: %.c
 	$(CC) $(CFLAGS) $*.c

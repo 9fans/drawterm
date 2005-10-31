@@ -1,10 +1,14 @@
 ROOT=..
 include ../Make.config
-LIB=../libmachdep.a
+LIB=libgui.a
 
 OFILES=\
-	getcallerpc.$O\
-	tas.$O
+	alloc.$O\
+	cload.$O\
+	draw.$O\
+	load.$O\
+	screen.$O\
+	wstrtoutf.$O
 
 $(LIB): $(OFILES)
 	$(AR) r $(LIB) $(OFILES)

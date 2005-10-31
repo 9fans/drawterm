@@ -86,7 +86,7 @@ lastelem(Chan *c)
 }
 	
 static Chan*
-fsattach(void *spec)
+fsattach(char *spec)
 {
 	Chan *c;
 	struct stat stbuf;
@@ -340,7 +340,7 @@ fsclose(Chan *c)
 }
 
 static long
-fsread(Chan *c, void *va, long n, ulong offset)
+fsread(Chan *c, void *va, long n, vlong offset)
 {
 	int fd, r;
 	Ufsinfo *uif;
@@ -375,7 +375,7 @@ fsread(Chan *c, void *va, long n, ulong offset)
 }
 
 static long
-fswrite(Chan *c, void *va, long n, ulong offset)
+fswrite(Chan *c, void *va, long n, vlong offset)
 {
 	int fd, r;
 	Ufsinfo *uif;

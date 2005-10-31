@@ -1,17 +1,13 @@
-TARG=drawterm
-CC=gcc
-CFLAGS=-Iinclude -c -ggdb -D_THREAD_SAFE -pthread # not ready for this yet: -Wall
-O=o
-#CC=cl
-#CFLAGS=-c -nologo -W3 -YX -Zi -MT -Zl -Iinclude -DWINDOWS
-#O=obj
+ROOT=.
+
+include Make.config
 
 OFILES=\
 	main.$O\
 	cpu.$O\
 	readcons.$O\
 	secstore.$O\
-    latin1.$O\
+	latin1.$O\
 
 LIBS=\
 	kern/libkern.a\
@@ -24,7 +20,7 @@ LIBS=\
 	libdraw/libdraw.a\
 	libc/libc.a\
 	kern/libkern.a\
-	gui-x11/libx11.a\
+	gui-$(GUI)/libgui.a\
 	libmemdraw/libmemdraw.a\
 	libdraw/libdraw.a\
 	kern/libkern.a\
@@ -35,13 +31,13 @@ LIBS=\
 	libmachdep.a
 
 $(TARG): $(OFILES) $(LIBS)
-	$(CC) -pthread -o $(TARG) $(OFILES) $(LIBS) -L/usr/X11R6/lib -lX11 -ggdb
+	$(CC) $(LDFLAGS) -o $(TARG) $(OFILES) $(LIBS) $(LDADD)
 
 %.$O: %.c
 	$(CC) $(CFLAGS) $*.c
 
 clean:
-	rm -f *.o */*.o */*.a drawterm  *.a
+	rm -f *.o */*.o */*.a *.a drawterm drawterm.exe
 
 kern/libkern.a:
 	(cd kern; make)
@@ -70,8 +66,8 @@ libdraw/libdraw.a:
 libc/libc.a:
 	(cd libc; make)
 
-gui-x11/libx11.a:
-	(cd gui-x11; make)
+gui-$(GUI)/libgui.a:
+	(cd gui-$(GUI); make)
 
 #libmachdep.a:
 #	arch=`uname -m|sed 's/i.86/386/;s/Power Macintosh/power/'`; \

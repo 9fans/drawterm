@@ -196,6 +196,7 @@ int		notify(Ureg*);
 int		nrand(int);
 int		okaddr(ulong, ulong, int);
 int		openmode(ulong);
+void		oserrstr(void);
 Block*		packblock(Block*);
 Block*		padblock(Block*, int);
 void		pagechainhead(Page*);

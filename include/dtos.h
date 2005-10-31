@@ -4,7 +4,7 @@
 #		define panic dt_panic
 #	endif
 #elif defined(WINDOWS)
-#	include "winduhz.h"
+#	include "9windows.h"
 #else
 #	error "Define an OS"
 #endif

@@ -1,5 +1,4 @@
 #include <windows.h>
-#include "winduhz.h"
 #include "u.h"
 #include "lib.h"
 #include "dat.h"

@@ -12,9 +12,9 @@
 // typedef unsigned long long uvlong;
 // typedef unsigned long ulong;
 
-static uvlong uvnan    = 0x7FF0000000000001;
-static uvlong uvinf    = 0x7FF0000000000000;
-static uvlong uvneginf = 0xFFF0000000000000;
+static uvlong uvnan    = 0x7FF0000000000001ULL;
+static uvlong uvinf    = 0x7FF0000000000000ULL;
+static uvlong uvneginf = 0xFFF0000000000000ULL;
 
 double
 __NaN(void)

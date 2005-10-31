@@ -1,7 +1,6 @@
+ROOT=..
+include ../Make.config
 LIB=libdraw.a
-CC=gcc
-CFLAGS=-I../include -I. -c -ggdb -D_THREAD_SAFE -pthread
-O=o
 
 OFILES=\
 	alloc.$O\
@@ -16,8 +15,8 @@ OFILES=\
 	rgb.$O
 
 $(LIB): $(OFILES)
-	ar r $(LIB) $(OFILES)
-	ranlib $(LIB)
+	$(AR) r $(LIB) $(OFILES)
+	$(RANLIB) $(LIB)
 
 %.$O: %.c
 	$(CC) $(CFLAGS) $*.c

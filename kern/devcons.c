@@ -445,12 +445,12 @@ kbdputc(Queue *q, int c)
 	 if(c == Kalt){
 		 collecting = 1;
 		 nk = 0;
-		 return;
+		 return 0;
 	 }
 
 	 if(!collecting){
 		 _kbdputc(c);
-		 return;
+		 return 0;
 	 }
 
 	kc[nk++] = c;
@@ -1034,8 +1034,7 @@ rand(void)
 	return randn;
 }
 
-/* static uvlong uvorder = 0x0001020304050607ULL; */
-static uvlong uvorder = (uvlong)0x0001020304050607;
+static uvlong uvorder = (uvlong) 0x0001020304050607ULL;
 
 static uchar*
 le2vlong(vlong *to, uchar *f)
