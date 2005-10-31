@@ -8,7 +8,7 @@
 void
 uartputs(char *s, int n)
 {
-	write(1, s, n); 
+//	write(1, s, n); 
 }
 
 

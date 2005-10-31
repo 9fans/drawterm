@@ -1,8 +1,7 @@
 #include <u.h>
 #include <libc.h>
 
-
-static uvlong order = (uvlong) 0x0001020304050607;
+static uvlong order = (uvlong) 0x0001020304050607ULL;
 
 static void
 be2vlong(vlong *to, uchar *f)

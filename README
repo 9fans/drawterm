@@ -1,0 +1,31 @@
+INSTALLATION
+--------------
+To build on Unix, run CONF=unix make.
+
+To build on Windows, you need Mingw.  See http://www.mingw.org.
+Edit Make.config to uncomment the Windows section
+and comment out the rest.  Then run CONF=windows make.
+
+(You can download nmake from 
+http://support.microsoft.com/default.aspx?scid=kb;en-us;Q132084
+Rename it to make.exe and put it in your path somewhere.
+)
+
+I haven't tested the Windows build on Windows itself.
+I cross-compile using mingw32 on Linux.
+
+
+BINARIES
+---------
+See http://swtch.com/drawterm/
+
+
+TO DO:
+------
+
+- Drawterm seems to have ssl synchronization problems.
+Specifically, fcp bigfile /mnt/term/tmp reliably wedges it.
+
+- Should clean up the code so that gcc -Wall doesn't print
+any warnings.
+

@@ -1,9 +1,8 @@
+ROOT=..
+include ../Make.config
 # N.B.  This is used only for secstore.  It needn't be fast.
 
 LIB=libmp.a
-CC=gcc
-CFLAGS=-I../include -I. -c -ggdb -D_THREAD_SAFE -pthread
-O=o
 
 OFILES=\
 	betomp.$O\
@@ -38,8 +37,8 @@ OFILES=\
 	strtomp.$O
 
 $(LIB): $(OFILES)
-	ar r $(LIB) $(OFILES)
-	ranlib $(LIB)
+	$(AR) r $(LIB) $(OFILES)
+	$(RANLIB) $(LIB)
 
 %.$O: %.c
 	$(CC) $(CFLAGS) $*.c

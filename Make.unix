@@ -1,0 +1,12 @@
+# Unix
+AR=ar
+CC=gcc
+RANLIB=ranlib
+CFLAGS=-I$(ROOT) -I$(ROOT)/include -I$(ROOT)/kern -c -ggdb -D_THREAD_SAFE -pthread # not ready for this yet: -Wall
+O=o
+OS=posix
+GUI=x11
+LDADD=-L/usr/X11R6/lib -lX11 -ggdb
+LDFLAGS=-pthread
+TARG=drawterm
+

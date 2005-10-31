@@ -1,0 +1,30 @@
+# Windows via mingw32
+# MING=mingw32- is necessary if you're cross-compiling
+# on another platform.  Otherwise the binaries are just
+# named gcc, etc.
+
+MING=mingw32-
+#MING=
+AR=$(MING)ar
+CC=$(MING)gcc
+RANLIB=$(MING)ranlib
+CFLAGS=-I$(ROOT)/include -I$(ROOT) -I$(ROOT)/kern -c -D_X86_ -DIS_32 -DWINDOWS
+O=o
+FS=fs-win32
+IP=win32
+OS=win32
+GUI=win32
+LDFLAGS=
+LDADD=-lkernel32 -ladvapi32 -lgdi32 -lmpr -lwsock32
+TARG=drawterm.exe
+
+# Windows via MSVC
+#AR=???
+#CC=cl
+#CFLAGS=-c -nologo -W3 -YX -Zi -MT -Zl -Iinclude -DWINDOWS
+#O=obj
+#FS=fs-win32
+#IP=win32
+#OS=win32
+#GUI=win32
+

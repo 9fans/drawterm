@@ -1,5 +1,4 @@
 #include	<windows.h>
-// #include	"winduhz.h"
 
 #undef Rectangle
 #define Rectangle _Rectangle
@@ -564,9 +563,8 @@ clipreadutf(HANDLE h)
 	return p;
 }
 
-
-uchar*
-clipread()
+char*
+clipread(void)
 {
 	HANDLE h;
 	uchar *p;

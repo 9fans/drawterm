@@ -1,15 +1,14 @@
+ROOT=..
+include ../Make.config
 LIB=libexportfs.a
-CC=gcc
-CFLAGS=-I../include -I. -I.. -c -ggdb -D_THREAD_SAFE -pthread
-O=o
 
 OFILES=\
 	exportfs.$O\
 	exportsrv.$O
 
 $(LIB): $(OFILES)
-	ar r $(LIB) $(OFILES)
-	ranlib $(LIB)
+	$(AR) r $(LIB) $(OFILES)
+	$(RANLIB) $(LIB)
 
 %.$O: %.c
 	$(CC) $(CFLAGS) $*.c
