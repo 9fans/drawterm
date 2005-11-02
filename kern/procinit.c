@@ -59,7 +59,7 @@ kproc(char *name, void (*fn)(void*), void *arg)
 	p->fgrp = up->fgrp;
 	if(p->fgrp)
 		incref(&p->fgrp->ref);
-	strecpy(p->text, sizeof p->text, name);
+	strecpy(p->text, p->text+sizeof p->text, name);
 
 	osproc(p);
 	return p->pid;

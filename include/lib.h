@@ -244,3 +244,9 @@ extern	int	nrand(int);
 extern	long	lrand(void);
 extern	long	lnrand(long);
 extern	double	frand(void);
+
+extern	ulong	getcallerpc(void*);
+extern	char*	cleanname(char*);
+extern	void	sysfatal(char*, ...);
+extern	char*	strecpy(char*, char*, char*);
+

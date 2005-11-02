@@ -456,7 +456,7 @@ kbdputc(Queue *q, int c)
 	kc[nk++] = c;
 	c = latin1(kc, nk);
 	if(c < -1)  /* need more keystrokes */
-		return;
+		return 0;
 	if(c != -1) /* valid sequence */
 		_kbdputc(c);
 	else

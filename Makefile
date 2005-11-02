@@ -69,10 +69,3 @@ libc/libc.a:
 gui-$(GUI)/libgui.a:
 	(cd gui-$(GUI); make)
 
-#libmachdep.a:
-#	arch=`uname -m|sed 's/i.86/386/;s/Power Macintosh/power/'`; \
-#	(cd gcc$$arch &&  make)
-
-libmachdep.a:
-	(cd posix-386; make)
-
