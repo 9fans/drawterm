@@ -14,7 +14,7 @@ FS=fs-win32
 IP=win32
 OS=win32
 GUI=win32
-LDFLAGS=
+LDFLAGS=-mwindows
 LDADD=-lkernel32 -ladvapi32 -lgdi32 -lmpr -lwsock32
 TARG=drawterm.exe
 
@@ -27,4 +27,8 @@ TARG=drawterm.exe
 #IP=win32
 #OS=win32
 #GUI=win32
+
+# for root
+libmachdep.a:
+	(cd win32-386; make)
 

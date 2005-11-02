@@ -10,3 +10,7 @@ LDADD=-L/usr/X11R6/lib -lX11 -ggdb
 LDFLAGS=-pthread
 TARG=drawterm
 
+# for root
+libmachdep.a:
+	arch=`uname -m|sed 's/i.86/386/;s/Power Macintosh/power/'`; \
+	(cd posix-$$arch &&  make)
