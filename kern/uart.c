@@ -4,11 +4,12 @@
 #include "fns.h"
 #include "error.h"
 
-#undef write
+extern int panicking;
 void
 uartputs(char *s, int n)
 {
-//	write(1, s, n); 
+	if(panicking)
+		write(1, s, n); 
 }
 
 

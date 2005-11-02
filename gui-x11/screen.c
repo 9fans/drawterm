@@ -999,7 +999,7 @@ _xgetsnarf(Display *xd)
 {
 	uchar *data, *xdata;
 	Atom clipboard, type, prop;
-	ulong len, lastlen, dummy;
+	unsigned long len, lastlen, dummy;
 	int fmt, i;
 	Window w;
 
@@ -1067,7 +1067,7 @@ _xgetsnarf(Display *xd)
 	}
 	/* get the property */
 	data = nil;
-	XGetWindowProperty(xd, xdrawable, prop, 0, SnarfSize/sizeof(ulong), 0, 
+	XGetWindowProperty(xd, xdrawable, prop, 0, SnarfSize/sizeof(unsigned long), 0, 
 		AnyPropertyType, &type, &fmt, &len, &dummy, &xdata);
 	if((type != XA_STRING && type != utf8string) || len == 0){
 		if(xdata)
