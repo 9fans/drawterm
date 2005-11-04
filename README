@@ -19,6 +19,10 @@ BINARIES
 ---------
 See http://swtch.com/drawterm/
 
+SOURCE
+------
+Use CVS: cvs -d :pserver:anoncvs@cvs.pdos.csail.mit.edu:/cvs co drawterm
+On the web at http://cvs.pdos.csail.mit.edu/cvs/drawterm
 
 TO DO:
 ------
