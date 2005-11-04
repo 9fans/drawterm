@@ -23,9 +23,13 @@ See http://swtch.com/drawterm/
 TO DO:
 ------
 
-- Drawterm seems to have ssl synchronization problems.
-Specifically, fcp bigfile /mnt/term/tmp reliably wedges it.
-
 - Should clean up the code so that gcc -Wall doesn't print
 any warnings.
+
+- Should import latest /dev/draw to allow resize of window
+
+- Should copy 9term code and make console window a real
+	9term window instead.
+
+- Should implement /dev/label.
 
