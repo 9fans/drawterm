@@ -26,6 +26,7 @@ LIBS1=\
 # stupid gcc
 LIBS=$(LIBS1) $(LIBS1) $(LIBS1) libmachdep.a
 
+default: $(TARG)
 $(TARG): $(OFILES) $(LIBS)
 	$(CC) $(LDFLAGS) -o $(TARG) $(OFILES) $(LIBS) $(LDADD)
 
@@ -67,4 +68,3 @@ libc/libc.a:
 
 gui-$(GUI)/libgui.a:
 	(cd gui-$(GUI); make)
-
