@@ -43,7 +43,7 @@
 #define S43 15
 #define S44 21
 
-#define PAYME(x) $##x
+#define PAYME(x) $ ## x
 
 /*
  * SI is data
@@ -102,14 +102,16 @@
 	orl B, %edi;\
 	xorl C, %edi;\
 
-#define	DATA	8
-#define	LEN	12
-#define	STATE	16
+#define	STACKSIZE	20
 
-#define EDATA	(-4)
-#define OLDEBX	(-8)
-#define OLDESI	(-12)
-#define OLDEDI	(-16)
+#define	DATA	(STACKSIZE+8)
+#define	LEN	(STACKSIZE+12)
+#define	STATE	(STACKSIZE+16)
+
+#define EDATA	(STACKSIZE-4)
+#define OLDEBX	(STACKSIZE-8)
+#define OLDESI	(STACKSIZE-12)
+#define OLDEDI	(STACKSIZE-16)
 
 	.text
 
@@ -120,6 +122,7 @@
 
 	/* Prelude */
 	pushl %ebp
+	subl $(STACKSIZE), %esp
 	movl %ebx, OLDEBX(%esp)
 	movl %esi, OLDESI(%esp)
 	movl %edi, OLDEDI(%esp)
@@ -130,7 +133,7 @@
 
 	movl DATA(%esp), %ebp
 
-mainloop:
+0:
 	movl STATE(%esp), %esi
 	movl (%esi), %eax
 	movl 4(%esi), %ebx
@@ -229,13 +232,13 @@ mainloop:
 
 	movl EDATA(%esp), %edi
 	cmpl %edi, %ebp
-	jb mainloop
+	jb 0b
 
 	/* Postlude */
 	movl OLDEBX(%esp), %ebx
 	movl OLDESI(%esp), %esi
 	movl OLDEDI(%esp), %edi
-	movl %esp, %ebp
-	leave
+	addl $(STACKSIZE), %esp
+	popl %ebp
 	ret
 
