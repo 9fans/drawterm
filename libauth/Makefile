@@ -12,6 +12,7 @@ OFILES=\
 	auth_rpc.$O\
 	auth_userpasswd.$O\
 
+default: $(LIB)
 $(LIB): $(OFILES)
 	$(AR) r $(LIB) $(OFILES)
 	$(RANLIB) $(LIB)

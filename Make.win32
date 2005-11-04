@@ -28,6 +28,8 @@ TARG=drawterm.exe
 #OS=win32
 #GUI=win32
 
+all: $(TARG)
+
 # for root
 libmachdep.a:
 	(cd win32-386; make)

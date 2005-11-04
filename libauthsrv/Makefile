@@ -18,6 +18,7 @@ OFILES=\
 	passtokey.$O\
 	readnvram.$O\
 
+default: $(LIB)
 $(LIB): $(OFILES)
 	$(AR) r $(LIB) $(OFILES)
 	$(RANLIB) $(LIB)

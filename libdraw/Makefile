@@ -14,6 +14,7 @@ OFILES=\
 	rectclip.$O\
 	rgb.$O
 
+default: $(LIB)
 $(LIB): $(OFILES)
 	$(AR) r $(LIB) $(OFILES)
 	$(RANLIB) $(LIB)

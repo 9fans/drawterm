@@ -6,6 +6,7 @@ OFILES=\
 	exportfs.$O\
 	exportsrv.$O
 
+default: $(LIB)
 $(LIB): $(OFILES)
 	$(AR) r $(LIB) $(OFILES)
 	$(RANLIB) $(LIB)
