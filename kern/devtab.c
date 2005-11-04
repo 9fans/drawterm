@@ -12,6 +12,8 @@ extern Dev mousedevtab;
 extern Dev drawdevtab;
 extern Dev ipdevtab;
 extern Dev fsdevtab;
+extern Dev mntdevtab;
+extern Dev lfddevtab;
 
 Dev *devtab[] = {
 	&rootdevtab,
@@ -22,6 +24,8 @@ Dev *devtab[] = {
 	&drawdevtab,
 	&ipdevtab,
 	&fsdevtab,
+	&mntdevtab,
+	&lfddevtab,
 	0
 };
 

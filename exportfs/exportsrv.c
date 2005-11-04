@@ -431,6 +431,7 @@ slave(Fsrpc *f)
 	Proc *p;
 	int pid;
 	static int nproc;
+	static QLock lk;
 
 	for(;;) {
 		for(p = Proclist; p; p = p->next) {

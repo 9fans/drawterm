@@ -50,6 +50,8 @@ extern	int	dirwstat(char*, Dir*);
 extern	int	dirfwstat(int, Dir*);
 extern	long	dirread(int, Dir*, long);
 
+extern	int	lfdfd(int);
+
 /*
  *  network dialing and authentication
  */

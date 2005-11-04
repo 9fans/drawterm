@@ -765,6 +765,7 @@ sslput(Dstate *s, Block * volatile b)
 	int offset;
 
 	if(waserror()){
+iprint("error: %s\n", up->errstr);
 		if(b != nil)
 			free(b);
 		nexterror();
@@ -1071,8 +1072,9 @@ sslwrite(Chan *c, void *a, long n, vlong o)
 			nexterror();
 		}
 		qlock(&s->out.q);
-
 		p = a;
+if(0) iprint("write %d %.2ux %.2ux %.2ux %.2ux %.2ux %.2ux %.2ux %.2ux\n",
+	n, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7]);
 		e = p + n;
 		do {
 			m = e - p;
@@ -1092,7 +1094,9 @@ sslwrite(Chan *c, void *a, long n, vlong o)
 
 			p += m;
 		} while(p < e);
-
+		p = a;
+if(0) iprint("wrote %d %.2ux %.2ux %.2ux %.2ux %.2ux %.2ux %.2ux %.2ux\n",
+	n, p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7]);
 		poperror();
 		qunlock(&s->out.q);
 		return n;

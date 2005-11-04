@@ -8,9 +8,12 @@ enum
 {
 	Qdir = 0,
 	Qboot = 0x1000,
+	Qmnt = 0x2000,
+	Qfactotum,
 
 	Nrootfiles = 32,
 	Nbootfiles = 32,
+	Nmntfiles = 2,
 };
 
 typedef struct Dirlist Dirlist;
@@ -26,6 +29,7 @@ struct Dirlist
 static Dirtab rootdir[Nrootfiles] = {
 	"#/",		{Qdir, 0, QTDIR},	0,		DMDIR|0555,
 	"boot",	{Qboot, 0, QTDIR},	0,		DMDIR|0555,
+	"mnt",	{Qmnt, 0, QTDIR},	0,		DMDIR|0555,
 };
 static uchar *rootdata[Nrootfiles];
 static Dirlist rootlist = 
@@ -33,7 +37,7 @@ static Dirlist rootlist =
 	0,
 	rootdir,
 	rootdata,
-	2,
+	3,
 	Nrootfiles
 };
 
@@ -48,6 +52,19 @@ static Dirlist bootlist =
 	bootdata,
 	1,
 	Nbootfiles
+};
+
+static Dirtab mntdir[Nmntfiles] = {
+	"mnt",	{Qmnt, 0, QTDIR},	0,		DMDIR|0555,
+	"factotum",	{Qfactotum, 0, QTDIR},	0,	DMDIR|0555,
+};
+static Dirlist mntlist =
+{
+	Qmnt,
+	mntdir,
+	nil,
+	2,
+	Nmntfiles
 };
 
 /*
@@ -97,7 +114,6 @@ rootreset(void)
 	addrootdir("dev");
 	addrootdir("env");
 	addrootdir("fd");
-	addrootdir("mnt");
 	addrootdir("net");
 	addrootdir("net.alt");
 	addrootdir("proc");
@@ -129,6 +145,13 @@ rootgen(Chan *c, char *name, Dirtab *dirt, int ndirt, int s, Dir *dp)
 			return 1;
 		}
 		return devgen(c, name, rootlist.dir, rootlist.ndir, s, dp);
+	case Qmnt:
+		if(s == DEVDOTDOT){
+			Qid tqiddir = {Qdir, 0, QTDIR};
+			devdir(c, tqiddir, "#/", 0, eve, 0555, dp);
+			return 1;
+		}
+		return devgen(c, name, mntlist.dir, mntlist.ndir, s, dp);
 	case Qboot:
 		if(s == DEVDOTDOT){
 			Qid tqiddir = {Qdir, 0, QTDIR};
@@ -139,22 +162,25 @@ rootgen(Chan *c, char *name, Dirtab *dirt, int ndirt, int s, Dir *dp)
 	default:
 		if(s == DEVDOTDOT){
 			Qid tqiddir = {Qdir, 0, QTDIR};
-			if((int)c->qid.path < Qboot)
-				devdir(c, tqiddir, "#/", 0, eve, 0555, dp);
-			else {
-				tqiddir.path = Qboot;
-				devdir(c, tqiddir, "#/", 0, eve, 0555, dp);
-			}
+			tqiddir.path = c->qid.path&0xF000;
+			devdir(c, tqiddir, "#/", 0, eve, 0555, dp);
 			return 1;
 		}
 		if(s != 0)
 			return -1;
-		if((int)c->qid.path < Qboot){
+		switch((int)c->qid.path & 0xF000){
+		case Qdir:
 			t = c->qid.path-1;
 			l = &rootlist;
-		}else{
+			break;
+		case Qboot:
 			t = c->qid.path - Qboot - 1;
 			l = &bootlist;
+			break;
+		case Qmnt:
+			t = c->qid.path - Qmnt - 1;
+			l = &mntlist;
+			break;
 		}
 		if(t >= l->ndir)
 			return -1;
@@ -209,17 +235,19 @@ rootread(Chan *c, void *buf, long n, vlong off)
 	switch(t){
 	case Qdir:
 	case Qboot:
+	case Qmnt:
 		return devdirread(c, buf, n, nil, 0, rootgen);
 	}
 
-	if(t<Qboot)
-		l = &rootlist;
-	else{
-		t -= Qboot;
+	if(t&Qboot)
 		l = &bootlist;
-	}
-
+	else if(t&Qmnt)
+		l = &mntlist;
+	else
+		l = &bootlist;
+	t &= 0xFFF;
 	t--;
+
 	if(t >= l->ndir)
 		error(Egreg);
 
