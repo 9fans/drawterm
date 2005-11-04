@@ -7,6 +7,7 @@ MING=mingw32-
 #MING=
 AR=$(MING)ar
 CC=$(MING)gcc
+AS=$(MING)as
 RANLIB=$(MING)ranlib
 CFLAGS=-I$(ROOT)/include -I$(ROOT) -I$(ROOT)/kern -c -D_X86_ -DIS_32 -DWINDOWS
 O=o
@@ -28,7 +29,7 @@ TARG=drawterm.exe
 #OS=win32
 #GUI=win32
 
-all: $(TARG)
+all: default
 
 # for root
 libmachdep.a:
