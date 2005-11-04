@@ -17,7 +17,6 @@
 #define Maxfdata 8192
 #define MaxStr 128
 
-static char*	getuser(void);
 static void	fatal(int, char*, ...);
 static void	catcher(void*, char*);
 static void	usage(void);
@@ -98,7 +97,9 @@ cpumain(int argc, char **argv)
 		close(fd);
 	}
 
-        user = readcons("user", getenv("USER"), 0);
+        user = getenv("USER");
+        if(user == nil)
+        	user = readcons("user", nil, 0);
 	secstoreserver = nil;
 	ARGBEGIN{
 	case 'a':
@@ -126,6 +127,9 @@ cpumain(int argc, char **argv)
 		}
 		break;
 */
+	case 'k':
+		keyspec = EARGF(usage());
+		break;
 	case 'u':
 		user = EARGF(usage());
 		break;
@@ -135,6 +139,15 @@ cpumain(int argc, char **argv)
 	default:
 		usage();
 	}ARGEND;
+
+	if((fd = dialfactotum()) < 0)
+		fprint(2, "dial factotum: %r\n");
+	else if(sysmount(fd, -1, "/mnt/factotum", MREPL, "") < 0)
+		fprint(2, "mount factotum: %r\n");
+	else if((fd = open("/mnt/factotum/ctl", OREAD)) < 0)
+		fprint(2, "open /mnt/factotum/ctl: %r\n");
+	else
+		close(fd);
 
 	if(secstoreserver == nil)
 		secstoreserver = authserver;
@@ -436,6 +449,96 @@ gettickets(Ticketreq *tr, char *key, char *trbuf, char *tbuf)
 	return mkserverticket(tr, key, tbuf);
 }
 
+/*
+ *  prompt user for a key.  don't care about memory leaks, runs standalone
+ */
+static Attr*
+promptforkey(char *params)
+{
+	char *v;
+	int fd;
+	Attr *a, *attr;
+	char *def;
+
+	fd = open("/dev/cons", ORDWR);
+	if(fd < 0)
+		sysfatal("opening /dev/cons: %r");
+
+	attr = _parseattr(params);
+	fprint(fd, "\n!Adding key:");
+	for(a=attr; a; a=a->next)
+		if(a->type != AttrQuery && a->name[0] != '!')
+			fprint(fd, " %q=%q", a->name, a->val);
+	fprint(fd, "\n");
+
+	for(a=attr; a; a=a->next){
+		v = a->name;
+		if(a->type != AttrQuery || v[0]=='!')
+			continue;
+		def = nil;
+		if(strcmp(v, "user") == 0)
+			def = getuser();
+		a->val = readcons(v, def, 0);
+		if(a->val == nil)
+			sysfatal("user terminated key input");
+		a->type = AttrNameval;
+	}
+	for(a=attr; a; a=a->next){
+		v = a->name;
+		if(a->type != AttrQuery || v[0]!='!')
+			continue;
+		def = nil;
+		if(strcmp(v+1, "user") == 0)
+			def = getuser();
+		a->val = readcons(v+1, def, 1);
+		if(a->val == nil)
+			sysfatal("user terminated key input");
+		a->type = AttrNameval;
+	}
+	fprint(fd, "!\n");
+	close(fd);
+	return attr;
+}
+
+/*
+ *  send a key to the mounted factotum
+ */
+static int
+sendkey(Attr *attr)
+{
+	int fd, rv;
+	char buf[1024];
+
+	fd = open("/mnt/factotum/ctl", ORDWR);
+	if(fd < 0)
+		sysfatal("opening /mnt/factotum/ctl: %r");
+	rv = fprint(fd, "key %A\n", attr);
+	read(fd, buf, sizeof buf);
+	close(fd);
+	return rv;
+}
+
+int
+askuser(char *params)
+{
+	Attr *attr;
+	
+	fmtinstall('A', _attrfmt);
+	
+	attr = promptforkey(params);
+	if(attr == nil)
+		sysfatal("no key supplied");
+	if(sendkey(attr) < 0)
+		sysfatal("sending key to factotum: %r");
+	return 0;
+}
+
+AuthInfo*
+p9anyfactotum(int fd, int afd)
+{
+	return auth_proxy(fd, askuser, "proto=p9any role=client %s", keyspec);
+}
+
 AuthInfo*
 p9any(int fd)
 {
@@ -444,10 +547,13 @@ p9any(int fd)
 	char tbuf[TICKETLEN+TICKETLEN+AUTHENTLEN], trbuf[TICKREQLEN];
 	char authkey[DESKEYLEN];
 	Authenticator auth;
-	int i, v2, n;
+	int afd, i, v2, n;
 	Ticketreq tr;
 	Ticket t;
 	AuthInfo *ai;
+
+	if((afd = open("/mnt/factotum/ctl", ORDWR)) >= 0)
+		return p9anyfactotum(fd, afd);
 
 	if((n = readstr(fd, buf, sizeof buf)) < 0)
 		fatal(1, "cannot read p9any negotiation");
@@ -596,11 +702,5 @@ setamalg(char *s)
 	if(ealgs != nil)
 		*ealgs++ = 0;
 	return setam(s);
-}
-
-char*
-getuser(void)
-{
-	return getenv("USER");
 }
 

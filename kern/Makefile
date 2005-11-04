@@ -13,6 +13,7 @@ OFILES=\
 	devfs-$(OS).$O\
 	devip.$O\
 	devip-$(OS).$O\
+	devlfd.$O\
 	devmnt.$O\
 	devmouse.$O\
 	devpipe.$O\

@@ -175,25 +175,6 @@ print(char *fmt, ...)
 	return n;
 }
 
-int
-iprint(char *fmt, ...)
-{
-	int n, s;
-	va_list arg;
-	char buf[PRINTSIZE];
-
-	s = splhi();
-	va_start(arg, fmt);
-	n = vseprint(buf, buf+sizeof(buf), fmt, arg) - buf;
-	va_end(arg);
-	if(screenputs != nil && iprintscreenputs)
-		screenputs(buf, n);
-	uartputs(buf, n);
-	splx(s);
-
-	return n;
-}
-
 void
 panic(char *fmt, ...)
 {
@@ -1207,4 +1188,24 @@ writebintime(char *buf, int n)
 	return n;
 }
 
+
+int
+iprint(char *fmt, ...)
+{
+	int n, s;
+	va_list arg;
+	char buf[PRINTSIZE];
+
+	s = splhi();
+	va_start(arg, fmt);
+	n = vseprint(buf, buf+sizeof(buf), fmt, arg) - buf;
+	va_end(arg);
+	if(screenputs != nil && iprintscreenputs)
+		screenputs(buf, n);
+#undef write
+	write(2, buf, n);
+	splx(s);
+
+	return n;
+}
 

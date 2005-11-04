@@ -8,27 +8,23 @@ OFILES=\
 	readcons.$O\
 	secstore.$O\
 	latin1.$O\
+	$(OS)-factotum.$O\
 
-LIBS=\
+LIBS1=\
 	kern/libkern.a\
 	exportfs/libexportfs.a\
+	libauth/libauth.a\
 	libauthsrv/libauthsrv.a\
 	libsec/libsec.a\
 	libmp/libmp.a\
 	libmemdraw/libmemdraw.a\
 	libmemlayer/libmemlayer.a\
 	libdraw/libdraw.a\
-	libc/libc.a\
-	kern/libkern.a\
 	gui-$(GUI)/libgui.a\
-	libmemdraw/libmemdraw.a\
-	libdraw/libdraw.a\
-	kern/libkern.a\
 	libc/libc.a\
-	libmemdraw/libmemdraw.a\
-	libmemlayer/libmemlayer.a\
-	libdraw/libdraw.a\
-	libmachdep.a
+
+# stupid gcc
+LIBS=$(LIBS1) $(LIBS1) $(LIBS1) libmachdep.a
 
 $(TARG): $(OFILES) $(LIBS)
 	$(CC) $(LDFLAGS) -o $(TARG) $(OFILES) $(LIBS) $(LDADD)
@@ -45,6 +41,9 @@ kern/libkern.a:
 exportfs/libexportfs.a:
 	(cd exportfs; make)
 
+libauth/libauth.a:
+	(cd libauth; make)
+	
 libauthsrv/libauthsrv.a:
 	(cd libauthsrv; make)
 

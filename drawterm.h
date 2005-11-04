@@ -8,3 +8,5 @@ extern int exportfs(int, int);
 extern char *user;
 extern char *getkey(char*, char*);
 extern char *findkey(char**, char*);
+extern int dialfactotum(void);
+extern char *getuser(void);

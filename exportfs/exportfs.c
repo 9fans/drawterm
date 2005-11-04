@@ -99,7 +99,7 @@ exportfs(int fd, int msgsz)
 			fatal("convM2S format error");
 		}
 
-//iprint("<- %F\n", &r->work);
+if(0) iprint("<- %F\n", &r->work);
 		DEBUG(DFD, "%F\n", &r->work);
 		(fcalls[r->work.type])(r);
 	}
@@ -110,6 +110,7 @@ reply(Fcall *r, Fcall *t, char *err)
 {
 	uchar *data;
 	int m, n;
+static QLock lk;
 
 	t->tag = r->tag;
 	t->fid = r->fid;
@@ -120,7 +121,7 @@ reply(Fcall *r, Fcall *t, char *err)
 	else 
 		t->type = r->type + 1;
 
-//iprint("-> %F\n", t);
+if(0) iprint("-> %F\n", t);
 	DEBUG(DFD, "\t%F\n", t);
 
 	data = malloc(messagesize);	/* not mallocz; no need to clear */

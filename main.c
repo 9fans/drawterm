@@ -36,6 +36,8 @@ main(int argc, char **argv)
 	char buf[1024], *s;
 	int n;
 
+	eve = getuser();
+
 	sizebug();
 	fmtinstall('r', errfmt);
 
