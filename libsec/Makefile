@@ -33,7 +33,6 @@ OFILES=\
 	hmac.$O\
 	md4.$O\
 	md5.$O\
-	md5block.$O\
 	md5pickle.$O\
 	nfastrand.$O\
 	prng.$O\
@@ -46,7 +45,6 @@ OFILES=\
 	rsagen.$O\
 	rsaprivtopub.$O\
 	sha1.$O\
-	sha1block.$O\
 	sha1pickle.$O\
 	smallprimes.$O
 

@@ -4,6 +4,8 @@ LIB=../libmachdep.a
 
 OFILES=\
 	getcallerpc.$O\
+	md5block.$O\
+	sha1block.$O\
 	tas.$O
 
 default: $(LIB)
@@ -13,4 +15,11 @@ $(LIB): $(OFILES)
 
 %.$O: %.c
 	$(CC) $(CFLAGS) $*.c
+
+%.$O: %.s
+	$(AS) -o $*.$O $*.s
+
+%.s: %.spp
+	cpp $*.spp >$*.s
+
 

@@ -116,9 +116,20 @@
 	.text
 
 	.p2align 2,0x90
+	.globl ___md5block
+	___md5block:
+
+	.p2align 2,0x90
+	.globl __md5block
+	__md5block:
+
+	.p2align 2,0x90
 	.globl _md5block
-		.type _md5block, @function
 	_md5block:
+
+	.p2align 2,0x90
+	.globl md5block
+	md5block:
 
 	/* Prelude */
 	pushl %ebp

@@ -1,9 +1,23 @@
 .text
 
 .p2align 2,0x90
+.globl ___sha1block
+___sha1block:
+	jmp sha1block
+	
+.p2align 2,0x90
+.globl __sha1block
+__sha1block:
+	jmp sha1block
+	
+.p2align 2,0x90
 .globl _sha1block
-	.type _sha1block, @function
 _sha1block:
+	jmp sha1block
+
+.p2align 2,0x90
+.globl sha1block
+sha1block:
 
 /* x = (wp[off-f] ^ wp[off-8] ^ wp[off-14] ^ wp[off-16]) <<< 1;
  * wp[off] = x;

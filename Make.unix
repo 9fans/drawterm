@@ -1,5 +1,6 @@
 # Unix
 AR=ar
+AS=as
 CC=gcc
 RANLIB=ranlib
 CFLAGS=-I$(ROOT) -I$(ROOT)/include -I$(ROOT)/kern -c -ggdb -D_THREAD_SAFE -pthread # not ready for this yet: -Wall
