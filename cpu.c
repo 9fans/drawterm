@@ -82,6 +82,25 @@ usage(void)
 }
 int fdd;
 
+int
+mountfactotum(void)
+{
+	int fd;
+	
+	if((fd = dialfactotum()) < 0)
+		return;
+	if(sysmount(fd, -1, "/mnt/factotum", MREPL, "") < 0){
+		fprint(2, "mount factotum: %r\n");
+		return;
+	}
+	if((fd = open("/mnt/factotum/ctl", OREAD)) < 0){
+		fprint(2, "open /mnt/factotum/ctl: %r\n");
+		return;
+	}
+	close(fd);
+	return 0;
+}
+
 void
 cpumain(int argc, char **argv)
 {
@@ -140,27 +159,18 @@ cpumain(int argc, char **argv)
 		usage();
 	}ARGEND;
 
-	if((fd = dialfactotum()) < 0)
-		fprint(2, "dial factotum: %r\n");
-	else if(sysmount(fd, -1, "/mnt/factotum", MREPL, "") < 0)
-		fprint(2, "mount factotum: %r\n");
-	else if((fd = open("/mnt/factotum/ctl", OREAD)) < 0)
-		fprint(2, "open /mnt/factotum/ctl: %r\n");
-	else
-		close(fd);
-
-	if(secstoreserver == nil)
-		secstoreserver = authserver;
-
-        if(secstoreserver && havesecstore(secstoreserver, user)){
-                s = secstorefetch(secstoreserver, user, nil);
-                if(s){
-                        if(strlen(s) >= sizeof secstorebuf)
-                                panic("secstore data too big");
-                        strcpy(secstorebuf, s);
-                }
-        }
-
+	if(mountfactotum() < 0){
+		if(secstoreserver == nil)
+			secstoreserver = authserver;
+	        if(havesecstore(secstoreserver, user)){
+	                s = secstorefetch(secstoreserver, user, nil);
+	                if(s){
+	                        if(strlen(s) >= sizeof secstorebuf)
+	                                panic("secstore data too big");
+	                        strcpy(secstorebuf, s);
+	                }
+	        }
+	}
 
 	if(argc != 0)
 		usage();
