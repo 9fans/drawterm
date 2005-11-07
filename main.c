@@ -6,8 +6,6 @@
 
 #include "drawterm.h"
 
-char *authaddr = "auth";
-char *cpuaddr = "cpu";
 char *argv0;
 char *user;
 

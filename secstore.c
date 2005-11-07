@@ -41,9 +41,9 @@ secdial(char *secstore)
 	 * like il!host or tcp!host or host.
 	 */
 	if(strcmp(p, "$auth")==0){
-		if(authaddr == nil)
+		if(authserver == nil)
 			return -1;
-		strecpy(buf, buf+sizeof buf, authaddr);
+		strecpy(buf, buf+sizeof buf, authserver);
 		nf = getfields(buf, f, nelem(f), 0, "!");
 		switch(nf){
 		default:
