@@ -54,7 +54,7 @@ osinit(void)
 	t->sema = CreateSemaphore(0, 0, 1000, 0);
 	if(t->sema == 0) {
 		oserror();
-		fatal("could not create semaphore: %r");
+		panic("could not create semaphore: %r");
 	}
 }
 
@@ -67,7 +67,7 @@ osnewproc(Proc *p)
 	op->sema = CreateSemaphore(0, 0, 1000, 0);
 	if (op->sema == 0) {
 		oserror();
-		fatal("could not create semaphore: %r");
+		panic("could not create semaphore: %r");
 	}
 }
 
@@ -92,7 +92,7 @@ osproc(Proc *p)
 
 	if(CreateThread(0, 0, tramp, p, 0, &tid) == 0) {
 		oserror();
-		fatal("osproc: %r");
+		panic("osproc: %r");
 	}
 
 	Sleep(0);
@@ -109,7 +109,7 @@ tramp(LPVOID vp)
 	op->sema = CreateSemaphore(0, 0, 1000, 0);
 	if(op->sema == 0) {
 		oserror();
-		fatal("could not create semaphore: %r");
+		panic("could not create semaphore: %r");
 	}
 
  	(*p->fn)(p->arg);
@@ -162,7 +162,7 @@ seconds(void)
 	return time(0);
 }
 
-int
+ulong
 ticks(void)
 {
 	return GetTickCount();
@@ -182,7 +182,6 @@ fastticks(uvlong *v)
 #endif
 
 extern int	main(int, char*[]);
-static int	args(char *argv[], int n, char *p);
 
 int APIENTRY
 WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR arg, int nshow)

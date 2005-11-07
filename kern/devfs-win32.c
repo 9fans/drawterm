@@ -56,7 +56,6 @@ static	void	fspath(Chan*, char*, char*);
 static	ulong	fsdirread(Chan*, uchar*, int, ulong);
 static	int	fsomode(int);
 static  int	chown(char *path, int uid, int);
-static	int	link(char *path, char *next);
 
 /* clumsy hack, but not worse than the Path stuff in the last one */
 static char*
@@ -132,7 +131,7 @@ fswalk1(Chan *c, char *name)
 
 	fspath(c, name, path);
 
-	/*	print("** fs walk '%s' -> %s\n", path, name); /**/
+	/*	print("** fs walk '%s' -> %s\n", path, name); */
 
 	if(stat(path, &stbuf) < 0)
 		return 0;

@@ -7,7 +7,9 @@
 
 #include "devip.h"
 
+#ifdef MSVC
 #pragma comment(lib, "wsock32.lib")
+#endif
 
 #undef listen
 #undef accept
