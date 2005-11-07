@@ -3,15 +3,16 @@
 #undef Rectangle
 #define Rectangle _Rectangle
 
-#include <u.h>
-#include <libc.h>
-#include <dat.h>
+#include "u.h"
+#include "lib.h"
+#include "kern/dat.h"
+#include "kern/fns.h"
+#include "error.h"
+#include "user.h"
 #include <draw.h>
 #include <memdraw.h>
-#include "error.h"
 #include "screen.h"
 #include "keyboard.h"
-#include "fns.h"
 
 Memimage	*gscreen;
 Screeninfo	screen;
@@ -31,14 +32,13 @@ static void	winproc(void *);
 static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 static void	paletteinit(void);
 static void	bmiinit(void);
-static void	screenload2(Rectangle r, int ldepth, uchar *p, Point pt, int step);
 
 static int readybit;
 static Rendez	rend;
 
 Point	ZP;
 
-static
+static int
 isready(void*a)
 {
 	return readybit;
@@ -82,7 +82,7 @@ screeninit(void)
 
 	gscreen = allocmemimage(Rect(0,0,dx,dy), fmt);
 	kproc("winscreen", winproc, 0);
-	sleep(&rend, isready, 0);
+	ksleep(&rend, isready, 0);
 }
 
 uchar*
@@ -123,7 +123,7 @@ screenload(Rectangle r, int depth, uchar *p, Point pt, int step)
 	if(rectclip(&r, gscreen->r) == 0)
 		return;
 
-	if(step&3 != 0 || ((pt.x*depth)%32) != 0 || (ulong)p&3 != 0)
+	if((step&3) != 0 || ((pt.x*depth)%32) != 0 || ((ulong)p&3) != 0)
 		panic("screenload: bad params %d %d %ux", step, pt.x, p);
 	dx = r.max.x - r.min.x;
 	dy = r.max.y - r.min.y;
@@ -574,9 +574,9 @@ clipread(void)
 		return strdup("");
 	}
 
-	if(h = GetClipboardData(CF_UNICODETEXT))
+	if((h = GetClipboardData(CF_UNICODETEXT)))
 		p = clipreadunicode(h);
-	else if(h = GetClipboardData(CF_TEXT))
+	else if((h = GetClipboardData(CF_TEXT)))
 		p = clipreadutf(h);
 	else {
 		oserror();
