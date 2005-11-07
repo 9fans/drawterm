@@ -29,8 +29,6 @@ exportfs(int fd, int msgsz)
 	char buf[ERRMAX], ebuf[ERRMAX];
 	Fsrpc *r;
 	int i, n;
-	char *dbfile, *srv, *file;
-	ulong initial;
 
 	fcalls[Tversion] = Xversion;
 	fcalls[Tauth] = Xauth;
@@ -110,7 +108,6 @@ reply(Fcall *r, Fcall *t, char *err)
 {
 	uchar *data;
 	int m, n;
-static QLock lk;
 
 	t->tag = r->tag;
 	t->fid = r->fid;
@@ -494,7 +491,6 @@ fatal(char *s, ...)
 {
 	char buf[ERRMAX];
 	va_list arg;
-	Proc *m;
 
 	if (s) {
 		va_start(arg, s);
@@ -510,6 +506,6 @@ fatal(char *s, ...)
 	if (s) 
 		sysfatal(buf);
 	else
-		exits(nil);
+		sysfatal("");
 }
 

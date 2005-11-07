@@ -1,5 +1,7 @@
+#ifdef PLAN9
 #pragma	src	"/sys/src/libauthsrv"
 #pragma	lib	"libauthsrv.a"
+#endif
 
 /*
  * Interface for talking to authentication server.

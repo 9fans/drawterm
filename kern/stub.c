@@ -152,6 +152,7 @@ postnote(Proc *p, int x, char *msg, int flag)
 	USED(x);
 	USED(msg);
 	USED(flag);
+	return 0;
 }
 
 void

@@ -1,7 +1,7 @@
 # Unix
 AR=ar
 AS=as
-CC=gcc -Wall
+CC=gcc -Wall -Wno-missing-braces
 RANLIB=ranlib
 CFLAGS=-I$(ROOT) -I$(ROOT)/include -I$(ROOT)/kern -c -ggdb -D_THREAD_SAFE -pthread # not ready for this yet: -Wall
 O=o

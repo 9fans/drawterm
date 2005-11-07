@@ -20,13 +20,14 @@
 #define	Font	IFont
 #define	Screen	IScreen
 
-#include <u.h>
-#include <libc.h>
-#include <draw.h>
-#include <memdraw.h>
-#include <keyboard.h>
+#include	"u.h"
+#include	"lib.h"
 #include	"dat.h"
 #include	"fns.h"
+#include	"user.h"
+#include	"draw.h"
+#include	"memdraw.h"
+#include	"keyboard.h"
 #include	"screen.h"
 
 #undef time
@@ -684,7 +685,6 @@ static void
 xkeyboard(XEvent *e)
 {
 	KeySym k;
-	unsigned int md;
 
 	/*
 	 * I tried using XtGetActionKeysym, but it didn't seem to

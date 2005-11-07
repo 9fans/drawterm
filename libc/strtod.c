@@ -521,7 +521,7 @@ xcmp(char *a, char *b)
 {
 	int c1, c2;
 
-	while(c1 = *b++) {
+	while((c1 = *b++)) {
 		c2 = *a++;
 		if(isupper(c2))
 			c2 = tolower(c2);

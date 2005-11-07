@@ -621,9 +621,6 @@ eipfmt(Fmt *f)
 	static char *efmt = "%.2lux%.2lux%.2lux%.2lux%.2lux%.2lux";
 	static char *ifmt = "%d.%d.%d.%d";
 	uchar *p, ip[16];
-	ulong *lp;
-	ushort s;
-	int i, j, n, eln, eli;
 	ulong ul;
 
 	switch(f->r) {

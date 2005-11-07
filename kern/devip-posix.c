@@ -199,7 +199,7 @@ so_getservbyname(char *service, char *net, char *port)
 int
 so_send(int fd, void *d, int n, int f)
 {
-	send(fd, d, n, f);
+	return send(fd, d, n, f);
 }
 
 int

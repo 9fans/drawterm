@@ -26,6 +26,7 @@ static	int	zcompare(const void*, const void*);
 static	void	xscan(Memimage *dst, Seg **seg, Seg *segtab, int nseg, int wind, Memimage *src, Point sp, int, int, int, int);
 static	void	yscan(Memimage *dst, Seg **seg, Seg *segtab, int nseg, int wind, Memimage *src, Point sp, int, int);
 
+#ifdef NOT
 static void
 fillcolor(Memimage *dst, int left, int right, int y, Memimage *src, Point p)
 {
@@ -37,6 +38,7 @@ fillcolor(Memimage *dst, int left, int right, int y, Memimage *src, Point p)
 	p.y = y;
 	memset(byteaddr(dst, p), srcval, right-left);
 }
+#endif
 
 static void
 fillline(Memimage *dst, int left, int right, int y, Memimage *src, Point p, int op)

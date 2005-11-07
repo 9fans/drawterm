@@ -16,7 +16,6 @@ OFILES=\
 	nvcsum.$O\
 	opasstokey.$O\
 	passtokey.$O\
-	readnvram.$O\
 
 default: $(LIB)
 $(LIB): $(OFILES)

@@ -18,16 +18,13 @@
 #define MaxStr 128
 
 static void	fatal(int, char*, ...);
-static void	catcher(void*, char*);
 static void	usage(void);
 static void	writestr(int, char*, char*, int);
 static int	readstr(int, char*, int);
 static char	*rexcall(int*, char*, char*);
-static int	setamalg(char*);
 static char *keyspec = "";
 static AuthInfo *p9any(int);
 
-static int 	notechan;
 #define system csystem
 static char	*system;
 static int	cflag;
@@ -44,8 +41,6 @@ static int	netkeyauth(int);
 static int	netkeysrvauth(int, char*);
 static int	p9auth(int);
 static int	srvp9auth(int, char*);
-static int	noauth(int);
-static int	srvnoauth(int, char*);
 
 char *authserver;
 
@@ -88,14 +83,14 @@ mountfactotum(void)
 	int fd;
 	
 	if((fd = dialfactotum()) < 0)
-		return;
+		return -1;
 	if(sysmount(fd, -1, "/mnt/factotum", MREPL, "") < 0){
 		fprint(2, "mount factotum: %r\n");
-		return;
+		return -1;
 	}
 	if((fd = open("/mnt/factotum/ctl", OREAD)) < 0){
 		fprint(2, "open /mnt/factotum/ctl: %r\n");
-		return;
+		return -1;
 	}
 	close(fd);
 	return 0;
@@ -166,7 +161,7 @@ cpumain(int argc, char **argv)
 	                s = secstorefetch(secstoreserver, user, nil);
 	                if(s){
 	                        if(strlen(s) >= sizeof secstorebuf)
-	                                panic("secstore data too big");
+	                                sysfatal("secstore data too big");
 	                        strcpy(secstorebuf, s);
 	                }
 	        }
@@ -189,7 +184,7 @@ cpumain(int argc, char **argv)
 		authserver = p;
 	}
 
-	if(err = rexcall(&data, system, srvname))
+	if((err = rexcall(&data, system, srvname)))
 		fatal(1, "%s: %s", err, system);
 
 	/* Tell the remote side the command to execute and where our working directory is */
@@ -580,7 +575,7 @@ p9any(int fd)
 		v2 = 1;
 		bbuf += 4;
 	}
-	if(p = strchr(bbuf, ' '))
+	if((p = strchr(bbuf, ' ')))
 		*p = 0;
 	p = bbuf;
 	if((dom = strchr(p, '@')) == nil)
@@ -664,6 +659,7 @@ p9any(int fd)
 	return ai;
 }
 
+/*
 static int
 noauth(int fd)
 {
@@ -678,6 +674,7 @@ srvnoauth(int fd, char *user)
 	ealgs = nil;
 	return fd;
 }
+*/
 
 void
 loghex(uchar *p, int n)
@@ -711,7 +708,7 @@ setam(char *name)
 
 /*
  *  set authentication mechanism and encryption/hash algs
- */
+ *
 int
 setamalg(char *s)
 {
@@ -721,3 +718,4 @@ setamalg(char *s)
 	return setam(s);
 }
 
+*/

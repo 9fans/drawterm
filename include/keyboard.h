@@ -1,5 +1,7 @@
+#ifdef PLAN9
 #pragma src "/sys/src/libdraw"
 #pragma lib "libdraw.a"
+#endif
 
 typedef struct 	Keyboardctl Keyboardctl;
 typedef struct	Channel	Channel;

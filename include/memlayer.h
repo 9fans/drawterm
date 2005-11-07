@@ -1,5 +1,7 @@
+#ifdef PLAN9
 #pragma src "/sys/src/libmemlayer"
 #pragma lib "libmemlayer.a"
+#endif
 
 typedef struct Memscreen Memscreen;
 typedef void (*Refreshfn)(Memimage*, Rectangle, void*);

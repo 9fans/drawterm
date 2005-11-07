@@ -89,10 +89,8 @@ Xflush(Fsrpc *t)
 void
 Xattach(Fsrpc *t)
 {
-	int i, nfd;
 	Fcall rhdr;
 	Fid *f;
-	char buf[128];
 
 	f = newfid(t->work.fid);
 	if(f == 0) {
@@ -431,7 +429,6 @@ slave(Fsrpc *f)
 	Proc *p;
 	int pid;
 	static int nproc;
-	static QLock lk;
 
 	for(;;) {
 		for(p = Proclist; p; p = p->next) {

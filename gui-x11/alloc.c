@@ -125,7 +125,7 @@ getXdata(Memimage *m, Rectangle r)
 
  	xm = m->X;
  	if(xm == nil)
- 		return;
+ 		return nil;
  
 	assert(xm != nil && xm->xi != nil);
 	

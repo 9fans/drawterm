@@ -23,6 +23,8 @@
 #define nsec sysnsec
 #define pread syspread
 #define pwrite syspwrite
+#undef sleep
+#define	sleep	osmsleep
 
 extern	int	bind(char*, char*, int);
 extern	int	chdir(char*);
@@ -43,6 +45,7 @@ extern	vlong	seek(int, vlong, int);
 extern	int	stat(char*, uchar*, int);
 extern	long	write(int, void*, long);
 extern	int	wstat(char*, uchar*, int);
+extern	void	werrstr(char* ,...);
 
 extern	Dir	*dirstat(char*);
 extern	Dir	*dirfstat(int);
@@ -65,3 +68,26 @@ extern	char *netmkaddr(char*, char*, char*);
 extern	int	reject(int, char*, char*);
 
 extern 	char*	argv0;
+
+extern	ulong	truerand(void);
+extern	int	pushssl(int, char*, char*, char*, int*);
+extern	int	iounit(int);
+extern	long	pread(int, void*, long, vlong);
+extern	long	pwrite(int, void*, long, vlong);
+extern	ulong	rendezvous(ulong, ulong);
+extern	int	kproc(char*, void(*)(void*), void*);
+extern	int	getpid(void);
+extern	void	panic(char*, ...);
+extern	void	sleep(int);
+extern	void	osyield(void);
+extern	void	setmalloctag(void*, ulong);
+extern	int	errstr(char*, uint);
+extern	int	rerrstr(char*, uint);
+extern	int	encrypt(void*, void*, int);
+extern	int	decrypt(void*, void*, int);
+extern	void	qlock(QLock*);
+extern	void	qunlock(QLock*);
+extern	vlong	nsec(void);
+extern	void	lock(Lock*);
+extern	void	unlock(Lock*);
+extern	int	iprint(char*, ...);
