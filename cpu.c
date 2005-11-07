@@ -99,7 +99,7 @@ mountfactotum(void)
 void
 cpumain(int argc, char **argv)
 {
-	char dat[MaxStr], buf[MaxStr], cmd[MaxStr], *p, *err, *secstoreserver, *s;
+	char dat[MaxStr], buf[MaxStr], cmd[MaxStr], *err, *secstoreserver, *s;
 	int fd, ms, data;
 
 	/* see if we should use a larger message size */
@@ -115,6 +115,12 @@ cpumain(int argc, char **argv)
         if(user == nil)
         	user = readcons("user", nil, 0);
 	secstoreserver = nil;
+	authserver = getenv("auth");
+	if(authserver == nil)
+		authserver = "auth";
+	system = getenv("cpu");
+	if(system == nil)
+		system = "cpu";
 	ARGBEGIN{
 	case 'a':
 		authserver = EARGF(usage());
@@ -154,6 +160,9 @@ cpumain(int argc, char **argv)
 		usage();
 	}ARGEND;
 
+	if(argc != 0)
+		usage();
+
 	if(mountfactotum() < 0){
 		if(secstoreserver == nil)
 			secstoreserver = authserver;
@@ -165,23 +174,6 @@ cpumain(int argc, char **argv)
 	                        strcpy(secstorebuf, s);
 	                }
 	        }
-	}
-
-	if(argc != 0)
-		usage();
-
-	if(system == nil) {
-		p = getenv("cpu");
-		if(p == 0)
-			fatal(0, "set $cpu");
-		system = p;
-	}
-	
-	if(authserver == nil) {
-		p = getenv("auth");
-		if(p == 0)
-			fatal(0, "set $auth");
-		authserver = p;
 	}
 
 	if((err = rexcall(&data, system, srvname)))
