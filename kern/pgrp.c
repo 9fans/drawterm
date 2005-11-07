@@ -189,7 +189,7 @@ dupfgrp(Fgrp *f)
 
 	new->maxfd = f->maxfd;
 	for(i = 0; i <= f->maxfd; i++) {
-		if(c = f->fd[i]){
+		if((c = f->fd[i])){
 			incref(&c->ref);
 			new->fd[i] = c;
 		}
@@ -212,7 +212,7 @@ closefgrp(Fgrp *f)
 		return;
 
 	for(i = 0; i <= f->maxfd; i++)
-		if(c = f->fd[i])
+		if((c = f->fd[i]))
 			cclose(c);
 
 	free(f->fd);

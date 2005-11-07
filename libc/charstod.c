@@ -8,7 +8,7 @@
  * necessary to back up the input stream up one byte after calling charstod.
  */
 
-#define ADVANCE *s++ = c; if(s>=e) return NaN(); c = (*f)(vp)
+#define ADVANCE *s++ = c; if(s>=e) return __NaN(); c = (*f)(vp)
 
 double
 charstod(int(*f)(void*), void *vp)
@@ -45,34 +45,34 @@ charstod(int(*f)(void*), void *vp)
 	}else if(s == start && (c == 'i' || c == 'I')){
 		ADVANCE;
 		if(c != 'n' && c != 'N')
-			return NaN();
+			return __NaN();
 		ADVANCE;
 		if(c != 'f' && c != 'F')
-			return NaN();
+			return __NaN();
 		ADVANCE;
 		if(c != 'i' && c != 'I')
-			return NaN();
+			return __NaN();
 		ADVANCE;
 		if(c != 'n' && c != 'N')
-			return NaN();
+			return __NaN();
 		ADVANCE;
 		if(c != 'i' && c != 'I')
-			return NaN();
+			return __NaN();
 		ADVANCE;
 		if(c != 't' && c != 'T')
-			return NaN();
+			return __NaN();
 		ADVANCE;
 		if(c != 'y' && c != 'Y')
-			return NaN();
+			return __NaN();
 		ADVANCE;  /* so caller can back up uniformly */
 		USED(c);
 	}else if(s == str && (c == 'n' || c == 'N')){
 		ADVANCE;
 		if(c != 'a' && c != 'A')
-			return NaN();
+			return __NaN();
 		ADVANCE;
 		if(c != 'n' && c != 'N')
-			return NaN();
+			return __NaN();
 		ADVANCE;  /* so caller can back up uniformly */
 		USED(c);
 	}

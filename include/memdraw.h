@@ -1,5 +1,7 @@
+#ifdef PLAN9
 #pragma	src	"/sys/src/libmemdraw"
 #pragma	lib	"libmemdraw.a"
+#endif
 
 typedef struct	Memimage Memimage;
 typedef struct	Memdata Memdata;
@@ -123,6 +125,7 @@ extern Memimage*	readmemimage(int);
 extern Memimage*	creadmemimage(int);
 extern int	writememimage(int, Memimage*);
 extern void	freememimage(Memimage*);
+extern void	_freememimage(Memimage*);
 extern int		_loadmemimage(Memimage*, Rectangle, uchar*, int);
 extern int		_cloadmemimage(Memimage*, Rectangle, uchar*, int);
 extern int		_unloadmemimage(Memimage*, Rectangle, uchar*, int);
@@ -133,7 +136,9 @@ extern ulong*	wordaddr(Memimage*, Point);
 extern uchar*	byteaddr(Memimage*, Point);
 extern int		drawclip(Memimage*, Rectangle*, Memimage*, Point*, Memimage*, Point*, Rectangle*, Rectangle*);
 extern void	memfillcolor(Memimage*, ulong);
+extern void	_memfillcolor(Memimage*, ulong);
 extern int		memsetchan(Memimage*, ulong);
+extern ulong	_rgbatoimg(Memimage*, ulong);
 
 /*
  * Graphics
@@ -155,6 +160,7 @@ extern void	memarc(Memimage*, Point, int, int, int, Memimage*, Point, int, int, 
 extern Rectangle	memlinebbox(Point, Point, int, int, int);
 extern int	memlineendsize(int);
 extern void	_memmkcmap(void);
+extern void	_memimageinit(void);
 extern void	memimageinit(void);
 
 /*
@@ -185,16 +191,20 @@ void		memimagemove(void*, void*);
  */
 extern void	rdb(void);
 extern int		iprint(char*, ...);
-#pragma varargck argpos iprint 1
 extern int		drawdebug;
 
 /*
  * doprint interface: numbconv bit strings
  */
+#ifdef VARARGCK
+#pragma varargck argpos iprint 1
 #pragma varargck type "llb" vlong
 #pragma varargck type "llb" uvlong
 #pragma varargck type "lb" long
 #pragma varargck type "lb" ulong
 #pragma varargck type "b" int
 #pragma varargck type "b" uint
+#endif
 
+extern ulong _pixelbits(Memimage*,Point);
+extern ulong pixelbits(Memimage*, Point);

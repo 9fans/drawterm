@@ -36,8 +36,6 @@ memimageinit(void)
 void
 memimagedraw(Memimage *dst, Rectangle r, Memimage *src, Point sp, Memimage *mask, Point mp, int op)
 {
-	int didx;
-	Rectangle dr, mr, sr;
 	Memdrawparam *par;
 	
 	if((par = _memimagedrawsetup(dst, r, src, sp, mask, mp, op)) == nil)
@@ -182,7 +180,6 @@ return 0;
 ulong
 pixelbits(Memimage *m, Point p)
 {
-	Xmem *xm;
 	if(m->X)
 		getXdata(m, Rect(p.x, p.y, p.x+1, p.y+1));
 	return _pixelbits(m, p);

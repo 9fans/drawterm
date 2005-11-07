@@ -86,7 +86,6 @@ static Memdrawparam par;
 Memdrawparam*
 _memimagedrawsetup(Memimage *dst, Rectangle r, Memimage *src, Point p0, Memimage *mask, Point p1, int op)
 {
-	static int n = 0;
 
 	if(mask == nil)
 		mask = memopaque;
@@ -458,7 +457,6 @@ static Writefn*	writefn(Memimage*);
 
 static Calcfn*	boolcopyfn(Memimage*, Memimage*);
 static Readfn*	convfn(Memimage*, Param*, Memimage*, Param*);
-static Readfn*	ptrfn(Memimage*);
 
 static Calcfn *alphacalc[Ncomp] = 
 {
@@ -569,19 +567,19 @@ dumpbuf(char *s, Buffer b, int n)
 	print("%s", s);
 	for(i=0; i<n; i++){
 		print(" ");
-		if(p=b.grey){
+		if((p=b.grey)){
 			print(" k%.2uX", *p);
 			b.grey += b.delta;
 		}else{	
-			if(p=b.red){
+			if((p=b.red)){
 				print(" r%.2uX", *p);
 				b.red += b.delta;
 			}
-			if(p=b.grn){
+			if((p=b.grn)){
 				print(" g%.2uX", *p);
 				b.grn += b.delta;
 			}
-			if(p=b.blu){
+			if((p=b.blu)){
 				print(" b%.2uX", *p);
 				b.blu += b.delta;
 			}
@@ -1291,7 +1289,7 @@ readnbit(Param *p, uchar *buf, int y)
 DBG print("readnbit dx %d %p=%p+%d*%d, *r=%d fetch %d ", dx, r, p->bytermin, y, p->bwidth, *r, n);
 	bits = *r++;
 	nbits = 8;
-	if(i=x&(npack-1)){
+	if((i=x&(npack-1))){
 DBG print("throwaway %d...", i);
 		bits <<= depth*i;
 		nbits -= depth*i;
@@ -1323,7 +1321,7 @@ DBG print("bit %x...", repl[bits>>sh]);
 DBG print("x=%d r=%p...", x, r);
 	bits = *r++;
 	nbits = 8;
-	if(i=x&(npack-1)){
+	if((i=x&(npack-1))){
 		bits <<= depth*i;
 		nbits -= depth*i;
 	}
@@ -1912,7 +1910,7 @@ boolcopyfn(Memimage *img, Memimage *mask)
 
 /*
  * Optimized draw for filling and scrolling; uses memset and memmove.
- */
+ *
 static void
 memsetb(void *vp, uchar val, int n)
 {
@@ -1923,6 +1921,7 @@ memsetb(void *vp, uchar val, int n)
 	while(p<ep)
 		*p++ = val;
 }
+*/
 
 static void
 memsets(void *vp, ushort val, int n)
@@ -2459,7 +2458,7 @@ membyteval(Memimage *src)
 	bpp = src->depth;
 	uc <<= (src->r.min.x&(7/src->depth))*src->depth;
 	uc &= ~(0xFF>>bpp);
-	/* pixel value is now in high part of byte. repeat throughout byte 
+	// pixel value is now in high part of byte. repeat throughout byte 
 	val = uc;
 	for(i=bpp; i<8; i<<=1)
 		val |= val>>i;

@@ -1,7 +1,8 @@
 #include "u.h"
-#include "libc.h"
+#include "lib.h"
 #include "kern/dat.h"
 #include "kern/fns.h"
+#include "user.h"
 
 #include "drawterm.h"
 
@@ -32,10 +33,6 @@ sizebug(void)
 int
 main(int argc, char **argv)
 {
-	int fd;
-	char buf[1024], *s;
-	int n;
-
 	eve = getuser();
 
 	sizebug();

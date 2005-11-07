@@ -413,7 +413,7 @@ fswstat(Chan *c, uchar *buf, int n)
 {
 	Dir d;
 	struct stat stbuf;
-	char old[MAXPATH], new[MAXPATH], dir[MAXPATH];
+	char old[MAXPATH], new[MAXPATH];
 	char strs[MAXPATH*3], *p;
 	Ufsinfo *uif;
 
@@ -491,9 +491,6 @@ fsqid(char *p, struct stat *st)
 static void
 fspath(Chan *c, char *ext, char *path)
 {
-	int i, n;
-	char *comp[MAXCOMP];
-
 	strcpy(path, base);
 	strcat(path, "/");
 	strcat(path, uc2name(c));

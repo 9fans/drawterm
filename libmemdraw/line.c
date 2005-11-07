@@ -11,6 +11,7 @@ enum
 	Arrow3 = 3,
 };
 
+#ifdef NOT
 static
 int
 lmin(int a, int b)
@@ -19,6 +20,7 @@ lmin(int a, int b)
 		return a;
 	return b;
 }
+#endif
 
 static
 int

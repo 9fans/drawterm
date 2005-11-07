@@ -128,9 +128,6 @@ prflush(void)
 static void
 putstrn0(char *str, int n, int usewrite)
 {
-	int m;
-	char *t;
-
 	/*
 	 *  if someone is reading /dev/kprint,
 	 *  put the message there.
@@ -294,8 +291,7 @@ echoserialoq(char *buf, int n)
 static void
 echo(char *buf, int n)
 {
-	static int ctrlt, pid;
-	extern ulong etext;
+	static int ctrlt;
 	int x;
 	char *e, *p;
 
@@ -655,11 +651,10 @@ consclose(Chan *c)
 static long
 consread(Chan *c, void *buf, long n, vlong off)
 {
-	ulong l;
-	char *b, *bp;
+	char *b;
 	char tmp[128];		/* must be >= 6*NUMSIZE */
 	char *cbuf = buf;
-	int ch, i, k, id, eol;
+	int ch, i, eol;
 	vlong offset = off;
 
 	if(n <= 0)
@@ -819,7 +814,7 @@ conswrite(Chan *c, void *va, long n, vlong off)
 	char buf[256];
 	long l, bp;
 	char *a = va;
-	int id, fd;
+	int fd;
 	Chan *swc;
 	ulong offset = off;
 	Cmdbuf *cb;
@@ -866,7 +861,7 @@ conswrite(Chan *c, void *va, long n, vlong off)
 			} else if(strncmp(a, "ctlpoff", 7) == 0){
 				kbd.ctlpoff = 1;
 			}
-			if(a = strchr(a, ' '))
+			if((a = strchr(a, ' ')))
 				a++;
 		}
 		break;
@@ -999,19 +994,19 @@ seedrand(void)
 	randomread((void*)&randn, sizeof(randn));
 }
 
-// int
-// nrand(int n)
-// {
-// 	if(randn == 0)
-// 		seedrand();
-// 	randn = randn*1103515245 + 12345 + fastticks(0);
-// 	return (randn>>16) % n;
-// }
+int
+xnrand(int n)
+{
+	if(randn == 0)
+		seedrand();
+	randn = randn*1103515245 + 12345 + fastticks(0);
+	return (randn>>16) % n;
+}
 
 int
 rand(void)
 {
-	nrand(1);
+	xnrand(1);
 	return randn;
 }
 
@@ -1058,6 +1053,7 @@ le2long(long *to, uchar *f)
 	return f+sizeof(long);
 }
 
+/*
 static uchar*
 long2le(uchar *t, long from)
 {
@@ -1070,6 +1066,7 @@ long2le(uchar *t, long from)
 		t[i] = f[o[i]];
 	return t+sizeof(long);
 }
+*/
 
 char *Ebadtimectl = "bad time control";
 

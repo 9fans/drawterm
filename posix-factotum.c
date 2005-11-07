@@ -1,6 +1,7 @@
 #include <u.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <ctype.h>
 #include <pwd.h>
 #include <libc.h>
 #include <auth.h>
@@ -37,8 +38,6 @@ getuser(void)
 static char*
 nsfromdisplay(void)
 {
-	int fd;
-	Dir *d;
 	char *disp, *p;
 
 	if((disp = getenv("DISPLAY")) == nil){

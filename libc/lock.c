@@ -22,7 +22,7 @@ lock(Lock *lk)
 			return;
 
 	for(i=0; i<100; i++) {
-		osyield(0);
+		osyield();
 		if(canlock(lk))
 			return;
 	}

@@ -167,7 +167,6 @@ kstrdup(char **p, char *s)
 {
 	int n;
 	char *t, *prev;
-	static Lock l;
 
 	n = strlen(s)+1;
 	/* if it's a user, we can wait for memory; if not, something's very wrong */
@@ -1422,8 +1421,7 @@ char isfrog[256]={
 void
 validname(char *aname, int slashok)
 {
-	char *p, *ename, *name;
-	uint t;
+	char *ename, *name;
 	int c;
 	Rune r;
 

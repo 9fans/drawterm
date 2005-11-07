@@ -176,7 +176,7 @@ static	char Ewriteoutside[] =	"writeimage outside image";
 static	char Enotfont[] =	"image not a font";
 static	char Eindex[] =		"character index out of range";
 static	char Enoclient[] =	"no such draw client";
-static	char Edepth[] =	"image has bad depth";
+/* static	char Edepth[] =	"image has bad depth"; */
 static	char Enameused[] =	"image name in use";
 static	char Enoname[] =	"no image with that name";
 static	char Eoldname[] =	"named image no longer valid";
@@ -627,7 +627,7 @@ drawfreedscreen(DScreen *this)
 		dscreen = this->next;
 		goto Found;
 	}
-	while(next = ds->next){	/* assign = */
+	while((next = ds->next)){	/* assign = */
 		if(next == this){
 			ds->next = this->next;
 			goto Found;
@@ -702,7 +702,7 @@ drawuninstallscreen(Client *client, CScreen *this)
 		free(this);
 		return;
 	}
-	while(next = cs->next){	/* assign = */
+	while((next = cs->next)){	/* assign = */
 		if(next == this){
 			cs->next = this->next;
 			drawfreedscreen(this->dscreen);
@@ -726,7 +726,7 @@ drawuninstall(Client *client, int id)
 		drawfreedimage(d);
 		return;
 	}
-	while(next = d->next){	/* assign = */
+	while((next = d->next)){	/* assign = */
 		if(next->id == id){
 			d->next = next->next;
 			drawfreedimage(next);
@@ -1024,7 +1024,7 @@ drawclose(Chan *c)
 	if(QID(c->qid) == Qctl)
 		cl->busy = 0;
 	if((c->flag&COPEN) && (decref(&cl->r)==0)){
-		while(r = cl->refresh){	/* assign = */
+		while((r = cl->refresh)){	/* assign = */
 			cl->refresh = r->next;
 			free(r);
 		}

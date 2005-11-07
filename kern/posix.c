@@ -86,7 +86,6 @@ void
 oserrstr(void)
 {
 	char *p;
-	char buf[ERRMAX];
 
 	if((p = strerror(errno)) != nil)
 		strecpy(up->errstr, up->errstr+ERRMAX, p);
@@ -132,7 +131,6 @@ tramp(void *vp)
 void
 procsleep(void)
 {
-	int c;
 	Proc *p;
 	Oproc *op;
 

@@ -1,5 +1,7 @@
+#ifdef PLAN9
 #pragma	src	"/sys/src/libauth"
 #pragma	lib	"libauth.a"
+#endif
 
 /*
  * Interface for typical callers.
@@ -118,7 +120,9 @@ void	_freeattr(Attr*);
 Attr	*_mkattr(int, char*, char*, Attr*);
 Attr	*_parseattr(char*);
 char	*_strfindattr(Attr*, char*);
+#ifdef VARARGCK
 #pragma varargck type "A" Attr*
+#endif
 
 extern AuthInfo*	fauth_proxy(int, AuthRpc *rpc, AuthGetkey *getkey, char *params);
 extern AuthInfo*	auth_proxy(int fd, AuthGetkey *getkey, char *fmt, ...);
@@ -138,7 +142,10 @@ extern Attr*		auth_attr(AuthRpc *rpc);
 extern void		auth_freerpc(AuthRpc *rpc);
 extern uint		auth_rpc(AuthRpc *rpc, char *verb, void *a, int n);
 extern int		auth_wep(char*, char*, ...);
+
+#ifdef VARARGCK
 #pragma varargck argpos auth_proxy 3
 #pragma varargck argpos auth_challenge 1
 #pragma varargck argpos auth_respond 3
 #pragma varargck argpos auth_getuserpasswd 2
+#endif

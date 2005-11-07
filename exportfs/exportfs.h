@@ -143,6 +143,6 @@ char*	estrdup(char*);
 void*	emallocz(uint);
 int		readmessage(int, char*, int);
 
-#define notify
-#define noted
-#define exits
+#define notify(x)
+#define noted(x)
+#define exits(x)

@@ -235,7 +235,9 @@ extern	int	fmtinstall(int, int (*)(Fmt*));
 extern	char*	fmtstrflush(Fmt*);
 extern	int	runefmtstrinit(Fmt*);
 extern	Rune*	runefmtstrflush(Fmt*);
-
+extern	int	fmtstrcpy(Fmt*, char*);
+extern	int	fmtprint(Fmt*, char*, ...);
+extern	int	fmtvprint(Fmt*, char*, va_list);
 extern	void*	mallocz(ulong, int);
 
 extern	void	srand(long);
@@ -250,3 +252,21 @@ extern	char*	cleanname(char*);
 extern	void	sysfatal(char*, ...);
 extern	char*	strecpy(char*, char*, char*);
 
+extern	int	tokenize(char*, char**, int);
+extern	int	getfields(char*, char**, int, int, char*);
+extern	char*	utfecpy(char*, char*, char*);
+extern	long	tas(long*);
+extern	void	quotefmtinstall(void);
+extern	int	dec64(uchar*, int, char*, int);
+extern	int	enc64(char*, int, uchar*, int);
+extern	int	dec32(uchar*, int, char*, int);
+extern	int	enc32(char*, int, uchar*, int);
+void		hnputs(void *p, unsigned short v);
+extern	int	dofmt(Fmt*, char*);
+extern	double	__NaN(void);
+extern	int	__isNaN(double);
+extern	double	strtod(char*, char**);
+extern	int	utfnlen(char*, long);
+extern	double	__Inf(int);
+extern	int	__isInf(double, int);
+extern	double	pow10(int);

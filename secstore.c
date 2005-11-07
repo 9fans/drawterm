@@ -332,7 +332,7 @@ getfile(SConn *conn, uchar *key, int nkey)
 {
 	char *buf;
 	int nbuf, n, nr, len;
-	char s[Maxmsg+1], *gf, *p, *q;
+	char s[Maxmsg+1], *gf;
 	uchar skey[SHA1dlen], ib[Maxmsg+CHK], *ibr, *ibw;
 	AESstate aes;
 	DigestState *sha;
@@ -384,7 +384,7 @@ getfile(SConn *conn, uchar *key, int nkey)
 		if(n > 0){
 			buf = realloc(buf, nbuf+n+1);
 			if(buf == nil)
-				panic("out of memory");
+				sysfatal("out of memory");
 			memmove(buf+nbuf, ibr, n);
 			nbuf += n;
 			ibr += n;
