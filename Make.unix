@@ -1,6 +1,6 @@
 # Unix
-PTHREAD=
-#PTHREAD=-pthread
+#PTHREAD=	# for Mac
+PTHREAD=-pthread
 AR=ar
 AS=as
 RANLIB=ranlib
