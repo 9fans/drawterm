@@ -1,14 +1,16 @@
 # Unix
+PTHREAD=
+#PTHREAD=-pthread
 AR=ar
 AS=as
-CC=gcc -Wall -Wno-missing-braces
 RANLIB=ranlib
-CFLAGS=-I$(ROOT) -I$(ROOT)/include -I$(ROOT)/kern -c -ggdb -D_THREAD_SAFE -pthread # not ready for this yet: -Wall
+CC=gcc
+CFLAGS=-Wall -Wno-missing-braces -ggdb -I$(ROOT) -I$(ROOT)/include -I$(ROOT)/kern -c -D_THREAD_SAFE $(PTHREAD)
 O=o
 OS=posix
 GUI=x11
 LDADD=-L/usr/X11R6/lib -lX11 -ggdb
-LDFLAGS=-pthread
+LDFLAGS=$(PTHREAD)
 TARG=drawterm
 
 all: default
