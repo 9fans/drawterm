@@ -1,4 +1,6 @@
-#include "os.h"
+#include <u.h>
+#include <libc.h>
+#include <libsec.h>
 
 void
 _sha1block(uchar *p, ulong len, u32int *s)

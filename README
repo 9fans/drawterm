@@ -27,9 +27,6 @@ On the web at http://cvs.pdos.csail.mit.edu/cvs/drawterm
 TO DO:
 ------
 
-- Should clean up the code so that gcc -Wall doesn't print
-any warnings.
-
 - Should import latest /dev/draw to allow resize of window
 
 - Should copy 9term code and make console window a real

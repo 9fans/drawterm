@@ -585,7 +585,7 @@ fsdirread(Chan *c, uchar *va, int count, ulong offset)
 		d.length = stbuf.st_size;
 		d.type = 'U';
 		d.dev = c->dev;
-		n = convD2M(&d, (char*)va+i, count-i);
+		n = convD2M(&d, (uchar*)va+i, count-i);
 		if(n == BIT16SZ){
 			strcpy(uif->nextname, de);
 			break;

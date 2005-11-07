@@ -191,8 +191,8 @@ setcursor(void)
 	drawqlock();
 	fg = map[0];
 	bg = map[255];
-	xsrc = XCreateBitmapFromData(xdisplay, xdrawable, src, 16, 16);
-	xmask = XCreateBitmapFromData(xdisplay, xdrawable, mask, 16, 16);
+	xsrc = XCreateBitmapFromData(xdisplay, xdrawable, (char*)src, 16, 16);
+	xmask = XCreateBitmapFromData(xdisplay, xdrawable, (char*)mask, 16, 16);
 	xc = XCreatePixmapCursor(xdisplay, xsrc, xmask, &fg, &bg, -cursor.offset.x, -cursor.offset.y);
 	if(xc != 0) {
 		XDefineCursor(xdisplay, xdrawable, xc);
@@ -403,7 +403,7 @@ xinitscreen(void)
 	name.value = (uchar*)"drawterm";
 	name.encoding = XA_STRING;
 	name.format = 8;
-	name.nitems = strlen(name.value);
+	name.nitems = strlen((char*)name.value);
 	normalhints.flags = USSize|PMaxSize;
 	normalhints.max_width = Dx(r);
 	normalhints.max_height = Dy(r);
