@@ -110,7 +110,6 @@ scroll(void)
 	Point p;
 	Rectangle r;
 
-	drawqlock();
 	o = 8*h;
 	r = Rpt(window.min, Pt(window.max.x, window.max.y-o));
 	p = Pt(window.min.x, window.min.y+o);
@@ -119,7 +118,6 @@ scroll(void)
 	memimagedraw(gscreen, r, back, ZP, nil, ZP, S);
 	flushmemscreen(gscreen->r);
 	curpos.y -= o;
-	drawqunlock();
 }
 
 static void
