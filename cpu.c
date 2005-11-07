@@ -181,6 +181,13 @@ cpumain(int argc, char **argv)
 			fatal(0, "set $cpu");
 		system = p;
 	}
+	
+	if(authserver == nil) {
+		p = getenv("auth");
+		if(p == 0)
+			fatal(0, "set $auth");
+		authserver = p;
+	}
 
 	if(err = rexcall(&data, system, srvname))
 		fatal(1, "%s: %s", err, system);
