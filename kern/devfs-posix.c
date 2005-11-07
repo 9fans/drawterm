@@ -578,6 +578,7 @@ fsdirread(Chan *c, uchar *va, int count, ulong offset)
 
 		d.uid = "unknown";
 		d.gid = "unknown";
+		d.muid = "unknown";
 		d.qid = fsqid(path, &stbuf);
 		d.mode = (d.qid.type<<24)|(stbuf.st_mode&0777);
 		d.atime = stbuf.st_atime;
