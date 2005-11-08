@@ -7,8 +7,7 @@ OFILES=\
 	cload.$O\
 	draw.$O\
 	load.$O\
-	screen.$O\
-	wstrtoutf.$O
+	screen.$O
 
 default: $(LIB)
 $(LIB): $(OFILES)

@@ -228,6 +228,7 @@ ipopen(Chan *c, int omode)
 	Conv *cv, *lcv;
 
 	omode &= 3;
+	perm = 0;
 	switch(omode) {
 	case OREAD:
 		perm = 4;

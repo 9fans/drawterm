@@ -19,13 +19,13 @@ static uvlong uvneginf = 0xFFF0000000000000ULL;
 double
 __NaN(void)
 {
-	return *(double*)&uvnan;
+	return *(double*)(void*)&uvnan;
 }
 
 int
 __isNaN(double d)
 {
-	uvlong x = *(uvlong*)&d;
+	uvlong x = *(uvlong*)(void*)&d;
 	return (ulong)(x>>32)==0x7FF00000 && !__isInf(d, 0);
 }
 
@@ -33,9 +33,9 @@ double
 __Inf(int sign)
 {
 	if(sign < 0)
-		return *(double*)&uvinf;
+		return *(double*)(void*)&uvinf;
 	else
-		return *(double*)&uvneginf;
+		return *(double*)(void*)&uvneginf;
 }
 
 int
@@ -43,7 +43,7 @@ __isInf(double d, int sign)
 {
 	uvlong x;
 
-	x = *(uvlong*)&d;
+	x = *(uvlong*)(void*)&d;
 	if(sign == 0)
 		return x==uvinf || x==uvneginf;
 	else if(sign > 0)

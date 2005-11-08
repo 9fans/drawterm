@@ -5,6 +5,7 @@
 #	endif
 #elif defined(WINDOWS)
 #	include "9windows.h"
+#	define main mymain
 #else
 #	error "Define an OS"
 #endif

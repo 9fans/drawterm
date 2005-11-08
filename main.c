@@ -32,6 +32,8 @@ int
 main(int argc, char **argv)
 {
 	eve = getuser();
+	if(eve == nil)
+		eve = "drawterm";
 
 	sizebug();
 	fmtinstall('r', errfmt);
@@ -101,6 +103,7 @@ findkey(char **puser, char *dom)
 			continue;
 		pass = nil;
 		haveproto = havedom = 0;
+		user = nil;
 		for(i=1; i<nf; i++){
 			if(strncmp(f[i], "user=", 5) == 0)
 				user = f[i]+5;

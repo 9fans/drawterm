@@ -181,6 +181,8 @@ rootgen(Chan *c, char *name, Dirtab *dirt, int ndirt, int s, Dir *dp)
 			t = c->qid.path - Qmnt - 1;
 			l = &mntlist;
 			break;
+		default:
+			return -1;
 		}
 		if(t >= l->ndir)
 			return -1;
