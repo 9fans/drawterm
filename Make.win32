@@ -9,6 +9,7 @@ AR=$(MING)ar
 CC=$(MING)gcc
 AS=$(MING)as
 RANLIB=$(MING)ranlib
+WINDRES=$(MING)windres
 CFLAGS=-Wall -Wno-missing-braces -I$(ROOT)/include -I$(ROOT) -I$(ROOT)/kern -c -D_X86_ -DIS_32 -DWINDOWS -O2
 O=o
 FS=fs-win32
@@ -18,6 +19,7 @@ GUI=win32
 LDFLAGS=-mwindows
 LDADD=-lkernel32 -ladvapi32 -lgdi32 -lmpr -lwsock32 -lmsvcrt -lmingw32
 TARG=drawterm.exe
+XOFILES=9ball.$O
 
 # Windows via MSVC
 #AR=???
@@ -34,4 +36,7 @@ all: default
 # for root
 libmachdep.a:
 	(cd win32-386; make)
+
+9ball.$O: 9ball.rc 9ball.ico
+	$(WINDRES) -i 9ball.rc -o 9ball.o
 
