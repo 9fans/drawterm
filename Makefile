@@ -9,6 +9,7 @@ OFILES=\
 	secstore.$O\
 	latin1.$O\
 	$(OS)-factotum.$O\
+	$(XOFILES)\
 
 LIBS1=\
 	kern/libkern.a\
