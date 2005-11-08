@@ -46,12 +46,13 @@ so_socket(int type)
 
 	fd = socket(AF_INET, type, 0);
 	if(fd < 0)
-		error(sys_errlist[errno]);
+		oserror();
 
 	one = 1;
-	if(setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char*)&one, sizeof(one)) > 0)
-		print("setsockopt: %s", sys_errlist[errno]);
-
+	if(setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (char*)&one, sizeof(one)) > 0){
+		oserrstr();
+		print("setsockopt: %s\n", up->errstr);
+	}
 
 	return fd;
 }
@@ -68,7 +69,7 @@ so_connect(int fd, unsigned long raddr, unsigned short rport)
 	hnputl(&sin.sin_addr.s_addr, raddr);
 
 	if(connect(fd, (struct sockaddr*)&sin, sizeof(sin)) < 0)
-		error(sys_errlist[errno]);
+		oserror();
 }
 
 void
@@ -79,7 +80,7 @@ so_getsockname(int fd, unsigned long *laddr, unsigned short *lport)
 
 	len = sizeof(sin);
 	if(getsockname(fd, (struct sockaddr*)&sin, &len) < 0)
-		error(sys_errlist[errno]);
+		oserror();
 
 	if(sin.sin_family != AF_INET || len != sizeof(sin))
 		error("not AF_INET");
@@ -92,7 +93,7 @@ void
 so_listen(int fd)
 {
 	if(listen(fd, 5) < 0)
-		error(sys_errlist[errno]);
+		oserror();
 }
 
 int
@@ -104,7 +105,7 @@ so_accept(int fd, unsigned long *raddr, unsigned short *rport)
 	len = sizeof(sin);
 	nfd = accept(fd, (struct sockaddr*)&sin, &len);
 	if(nfd < 0)
-		error(sys_errlist[errno]);
+		oserror();
 
 	if(sin.sin_family != AF_INET || len != sizeof(sin))
 		error("not AF_INET");
@@ -121,8 +122,10 @@ so_bind(int fd, int su, unsigned short port)
 	struct sockaddr_in sin;
 
 	one = 1;
-	if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char*)&one, sizeof(one)) < 0)
-		print("setsockopt: %s", sys_errlist[errno]);
+	if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char*)&one, sizeof(one)) < 0){
+		oserrstr();
+		print("setsockopt: %s", up->errstr);
+	}
 
 	if(su) {
 		for(i = 600; i < 1024; i++) {
@@ -133,7 +136,7 @@ so_bind(int fd, int su, unsigned short port)
 			if(bind(fd, (struct sockaddr*)&sin, sizeof(sin)) >= 0)	
 				return;
 		}
-		error(sys_errlist[errno]);
+		oserror();
 	}
 
 	memset(&sin, 0, sizeof(sin));
@@ -141,7 +144,7 @@ so_bind(int fd, int su, unsigned short port)
 	hnputs(&sin.sin_port, port);
 
 	if(bind(fd, (struct sockaddr*)&sin, sizeof(sin)) < 0)
-		error(sys_errlist[errno]);
+		oserror();
 }
 
 int

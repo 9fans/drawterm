@@ -15,11 +15,6 @@
 #define log2	liblog2
 #define log	liblog
 #define reboot	libreboot
-#define srand	dtsrand
-#define rand	dtrand
-#define nrand	dtnrand
-#define lrand	dtlrand
-#define lnrand	dtlnrand
 #undef timeradd
 #define timeradd	xtimeradd
 
@@ -239,13 +234,6 @@ extern	int	fmtstrcpy(Fmt*, char*);
 extern	int	fmtprint(Fmt*, char*, ...);
 extern	int	fmtvprint(Fmt*, char*, va_list);
 extern	void*	mallocz(ulong, int);
-
-extern	void	srand(long);
-extern	int	rand(void);
-extern	int	nrand(int);
-extern	long	lrand(void);
-extern	long	lnrand(long);
-extern	double	frand(void);
 
 extern	ulong	getcallerpc(void*);
 extern	char*	cleanname(char*);

@@ -60,7 +60,6 @@ static struct
 char	*sysname;
 vlong	fasthz;
 
-static void	seedrand(void);
 static int	readtime(ulong, char*, int);
 static int	readbintime(char*, int);
 static int	writetime(char*, int);
@@ -985,30 +984,6 @@ Dev consdevtab = {
 	devremove,
 	devwstat,
 };
-
-static	ulong	randn;
-
-static void
-seedrand(void)
-{
-	randomread((void*)&randn, sizeof(randn));
-}
-
-int
-xnrand(int n)
-{
-	if(randn == 0)
-		seedrand();
-	randn = randn*1103515245 + 12345 + fastticks(0);
-	return (randn>>16) % n;
-}
-
-int
-rand(void)
-{
-	xnrand(1);
-	return randn;
-}
 
 static uvlong uvorder = (uvlong) 0x0001020304050607ULL;
 

@@ -380,9 +380,8 @@ p9auth(int fd)
 		return fd;
 
 	/* exchange random numbers */
-	srand(truerand());
 	for(i = 0; i < 4; i++)
-		key[i] = rand();
+		key[i] = fastrand();
 	if(write(fd, key, 4) != 4)
 		return -1;
 	if(readn(fd, key+12, 4) != 4)

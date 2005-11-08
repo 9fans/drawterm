@@ -3,6 +3,7 @@
 #include "lib.h"
 #include "dat.h"
 #include "fns.h"
+#include <libsec.h>
 
 typedef struct Oproc Oproc;
 struct Oproc {
@@ -137,23 +138,48 @@ procwakeup(Proc *p)
 }
 
 void
+random20(uchar *p)
+{
+	LARGE_INTEGER ti;
+	int i, j;
+	FILETIME ft;
+	DigestState ds;
+	vlong tsc;
+	
+	GetSystemTimeAsFileTime(&ft);
+	memset(&ds, 0, sizeof ds);
+	sha1((uchar*)&ft, sizeof(ft), 0, &ds);
+	for(i=0; i<50; i++) {
+		for(j=0; j<10; j++) {
+			QueryPerformanceCounter(&ti);
+			sha1((uchar*)&ti, sizeof(ti), 0, &ds);
+			tsc = GetTickCount();
+			sha1((uchar*)&tsc, sizeof(tsc), 0, &ds);
+		}
+		Sleep(10);
+	}
+	sha1(0, 0, p, &ds);
+}
+
+void
 randominit(void)
 {
-	srand(seconds());
 }
 
 ulong
 randomread(void *v, ulong n)
 {
-	int m, i, *r;
-
-	m = (n / sizeof(int)) * sizeof(int);
-	for (i = 0, r = (int*)v; i < m; i += sizeof(int)) {
-		*r = rand();
-		r += sizeof(int);
+	int i;
+	uchar p[20];
+	
+	for(i=0; i<n; i+=20){
+		random20(p);
+		if(i+20 <= n)
+			memmove((char*)v+i, p, 20);
+		else
+			memmove((char*)v+i, p, n-i);
 	}
-
-	return m;
+	return n;
 }
 
 long
@@ -183,14 +209,151 @@ fastticks(uvlong *v)
 
 extern int	main(int, char*[]);
 
-int APIENTRY
-WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR arg, int nshow)
+
+int
+wstrutflen(Rune *s)
 {
-	main(__argc, __argv);
+	int n;
+	
+	for(n=0; *s; n+=runelen(*s),s++)
+		;
+	return n;
+}
+
+int
+wstrtoutf(char *s, Rune *t, int n)
+{
+	int i;
+	char *s0;
+
+	s0 = s;
+	if(n <= 0)
+		return wstrutflen(t)+1;
+	while(*t) {
+		if(n < UTFmax+1 && n < runelen(*t)+1) {
+			*s = 0;
+			return s-s0+wstrutflen(t)+1;
+		}
+		i = runetochar(s, t);
+		s += i;
+		n -= i;
+		t++;
+	}
+	*s = 0;
+	return s-s0;
+}
+
+int
+win_hasunicode(void)
+{
+	OSVERSIONINFOA osinfo;
+	int r;
+
+	osinfo.dwOSVersionInfoSize = sizeof(osinfo);
+	if(!GetVersionExA(&osinfo))
+		panic("GetVersionEx failed");
+	switch(osinfo.dwPlatformId) {
+	default:
+		panic("unknown PlatformId");
+	case VER_PLATFORM_WIN32s:
+		panic("Win32s not supported");
+	case VER_PLATFORM_WIN32_WINDOWS:
+		r = 0;
+		break;
+	case VER_PLATFORM_WIN32_NT:
+		r = 1;
+		break;
+	}
+
+	return r;
+}
+
+int
+wstrlen(Rune *s)
+{
+	int n;
+
+	for(n=0; *s; s++,n++)
+		;
+	return n;
+}
+static int	args(char *argv[], int n, char *p);
+
+int APIENTRY
+WinMain(HINSTANCE x, HINSTANCE y, LPSTR z, int w)
+{
+	int argc, n;
+	char *arg, *p, **argv;
+	Rune *warg;
+
+	if(0 && win_hasunicode()){
+		warg = GetCommandLineW();
+		n = (wstrlen(warg)+1)*UTFmax;
+		arg = malloc(n);
+		wstrtoutf(arg, warg, n);
+	}else
+		arg = GetCommandLineA();
+
+	/* conservative guess at the number of args */
+	for(argc=4,p=arg; *p; p++)
+		if(*p == ' ' || *p == '\t')
+			argc++;
+	argv = malloc(argc*sizeof(char*));
+	argc = args(argv, argc, arg);
+
+	mymain(argc, argv);
 	ExitThread(0);
 	return 0;
 }
 
+/*
+ * Break the command line into arguments
+ * The rules for this are not documented but appear to be the following
+ * according to the source for the microsoft C library.
+ * Words are seperated by space or tab
+ * Words containing a space or tab can be quoted using "
+ * 2N backslashes + " ==> N backslashes and end quote
+ * 2N+1 backslashes + " ==> N backslashes + literal "
+ * N backslashes not followed by " ==> N backslashes
+ */
+static int
+args(char *argv[], int n, char *p)
+{
+	char *p2;
+	int i, j, quote, nbs;
+
+	for(i=0; *p && i<n-1; i++) {
+		while(*p == ' ' || *p == '\t')
+			p++;
+		quote = 0;
+		argv[i] = p2 = p;
+		for(;*p; p++) {
+			if(!quote && (*p == ' ' || *p == '\t'))
+				break;
+			for(nbs=0; *p == '\\'; p++,nbs++)
+				;
+			if(*p == '"') {
+				for(j=0; j<(nbs>>1); j++)
+					*p2++ = '\\';
+				if(nbs&1)
+					*p2++ = *p;
+				else
+					quote = !quote;
+			} else {
+				for(j=0; j<nbs; j++)
+					*p2++ = '\\';
+				*p2++ = *p;
+			}
+		}
+		/* move p up one to avoid pointing to null at end of p2 */
+		if(*p)
+			p++;
+		*p2 = 0;	
+	}
+	argv[i] = 0;
+
+	return i;
+}
 /*
  * Windows socket error messages
  * There must be a way to get these strings out of the library.
