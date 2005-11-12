@@ -19,7 +19,11 @@ $(LIB): $(OFILES)
 %.$O: %.s
 	$(AS) -o $*.$O $*.s
 
-%.s: %.spp
-	cpp $*.spp >$*.s
+md5block.s: md5block.spp
+	cpp md5block.spp >md5block.s
+
+sha1block.s: sha1block.spp
+	cpp sha1block.spp >sha1block.s
+
 
 
