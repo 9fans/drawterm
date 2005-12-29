@@ -28,7 +28,7 @@ static AuthInfo *p9any(int);
 #define system csystem
 static char	*system;
 static int	cflag;
-int	dbg;
+extern int	dbg;
 
 static char	*srvname = "ncpu";
 static char	*ealgs = "rc4_256 sha1";
@@ -548,7 +548,7 @@ p9any(int fd)
 	char tbuf[TICKETLEN+TICKETLEN+AUTHENTLEN], trbuf[TICKREQLEN];
 	char authkey[DESKEYLEN];
 	Authenticator auth;
-	int afd, i, v2, n;
+	int afd, i, v2;
 	Ticketreq tr;
 	Ticket t;
 	AuthInfo *ai;
@@ -556,7 +556,7 @@ p9any(int fd)
 	if((afd = open("/mnt/factotum/ctl", ORDWR)) >= 0)
 		return p9anyfactotum(fd, afd);
 
-	if((n = readstr(fd, buf, sizeof buf)) < 0)
+	if(readstr(fd, buf, sizeof buf) < 0)
 		fatal(1, "cannot read p9any negotiation");
 	bbuf = buf;
 	v2 = 0;
@@ -577,7 +577,7 @@ p9any(int fd)
 	if(write(fd, buf2, strlen(buf2)+1) != strlen(buf2)+1)
 		fatal(1, "cannot write user/domain choice in p9any");
 	if(v2){
-		if((n = readstr(fd, buf, sizeof buf)) != 3)
+		if(readstr(fd, buf, sizeof buf) != 3)
 			fatal(1, "cannot read OK in p9any");
 		if(memcmp(buf, "OK\0", 3) != 0)
 			fatal(1, "did not get OK in p9any");
