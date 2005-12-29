@@ -30,7 +30,6 @@ emallocz(ulong n)
 	return v;
 }
 
-ulong messagesize;
 
 void
 Xversion(Fsrpc *t)
@@ -392,7 +391,7 @@ Xwstat(Fsrpc *t)
 		return;
 	}
 	strings = emallocz(t->work.nstat);	/* ample */
-	if(convM2D(t->work.stat, t->work.nstat, &d, strings) < 0){
+	if(convM2D(t->work.stat, t->work.nstat, &d, strings) <= BIT16SZ){
 		rerrstr(err, sizeof err);
 		reply(&t->work, &rhdr, err);
 		t->busy = 0;

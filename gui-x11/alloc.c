@@ -159,7 +159,6 @@ putXdata(Memimage *m, Rectangle r)
 	Xmem *xm;
 	XImage *xi;
 	GC g;
-	int offset;
 	Point xdelta, delta;
 	Point tp;
 	int x, y;
@@ -175,10 +174,6 @@ putXdata(Memimage *m, Rectangle r)
 	xi = xm->xi;
 
 	g = (m->chan == GREY1) ? xgccopy0 : xgccopy;
-	if(m->depth == 24)
-		offset = r.min.x % 4;
-	else
-		offset = m->r.min.x & (31/m->depth);
 
 	delta = subpt(r.min, m->r.min);
 	tp = xm->r.min;	/* avoid unaligned access on digital unix */
