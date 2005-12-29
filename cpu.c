@@ -99,7 +99,7 @@ mountfactotum(void)
 void
 cpumain(int argc, char **argv)
 {
-	char dat[MaxStr], buf[MaxStr], cmd[MaxStr], *err, *secstoreserver, *s;
+	char dat[MaxStr], buf[MaxStr], cmd[MaxStr], *err, *secstoreserver, *p, *s;
 	int fd, ms, data;
 
 	/* see if we should use a larger message size */
@@ -125,28 +125,26 @@ cpumain(int argc, char **argv)
 	case 'a':
 		authserver = EARGF(usage());
 		break;
+	case 'c':
+		system = EARGF(usage());
+		break;
+	case 'd':
+		dbg++;
+		break;
 	case 'e':
 		ealgs = EARGF(usage());
 		if(*ealgs == 0 || strcmp(ealgs, "clear") == 0)
 			ealgs = nil;
 		break;
-	case 'd':
-		dbg++;
-		break;
-	case 'c':
-		system = EARGF(usage());
-		break;
-/*
-	case 'c':
+	case 'C':
 		cflag++;
 		cmd[0] = '!';
 		cmd[1] = '\0';
-		while(p = ARGF()) {
+		while((p = ARGF()) != nil) {
 			strcat(cmd, " ");
 			strcat(cmd, p);
 		}
 		break;
-*/
 	case 'k':
 		keyspec = EARGF(usage());
 		break;
