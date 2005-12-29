@@ -419,11 +419,13 @@ kread(int fd, void *buf, long n, vlong *offp)
 	return n;
 }
 
+/* name conflicts with netbsd
 long
 _sys_read(int fd, void *buf, long n)
 {
 	return kread(fd, buf, n, nil);
 }
+*/
 
 long
 _syspread(int fd, void *buf, long n, vlong off)
