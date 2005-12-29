@@ -72,7 +72,7 @@ so_connect(int fd, unsigned long raddr, unsigned short rport)
 void
 so_getsockname(int fd, unsigned long *laddr, unsigned short *lport)
 {
-	uint len;
+	socklen_t len;
 	struct sockaddr_in sin;
 
 	len = sizeof(sin);
@@ -97,7 +97,7 @@ int
 so_accept(int fd, unsigned long *raddr, unsigned short *rport)
 {
 	int nfd;
-	uint len;
+	socklen_t len;
 	struct sockaddr_in sin;
 
 	len = sizeof(sin);

@@ -73,8 +73,6 @@ Atom targets;
 Atom text;
 Atom compoundtext;
 
-static	XModifierKeymap *modmap;
-static	int		keypermod;
 static	Drawable	xdrawable;
 /* static	Atom		wm_take_focus; */
 static	void		xexpose(XEvent*);
@@ -288,7 +286,6 @@ xinitscreen(void)
 	XSetWindowAttributes attrs;
 	XPixmapFormatValues *pfmt;
 	int n;
-	Memdata *md;
  
 	xscreenid = 0;
 	xdrawable = 0;
@@ -378,14 +375,11 @@ xinitscreen(void)
 		initmap(rootwin);
 	}
 
-	if((modmap = XGetModifierMapping(xdisplay)))
-		keypermod = modmap->max_keypermod;
 
 	r.min = ZP;
 	r.max.x = WidthOfScreen(screen);
 	r.max.y = HeightOfScreen(screen);
 
-	md = mallocz(sizeof(Memdata), 1);
 	
 	xsize = Dx(r)*3/4;
 	ysize = Dy(r)*3/4;
@@ -644,11 +638,7 @@ xmapping(XEvent *e)
 	if(e->type != MappingNotify)
 		return;
 	xe = (XMappingEvent*)e;
-	if(modmap)
-		XFreeModifiermap(modmap);
-	modmap = XGetModifierMapping(xe->display);
-	if(modmap)
-		keypermod = modmap->max_keypermod;
+	USED(xe);
 }
 
 

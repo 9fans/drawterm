@@ -27,10 +27,9 @@ extern Memimage *gscreen;
 static Rectangle flushr;
 static Rectangle window;
 static Point curpos;
-static int h, w;
+static int h;
 static void	termscreenputs(char*, int);
 
-Point ZP;
 
 static void
 screenflush(void)
@@ -51,7 +50,7 @@ addflush(Rectangle r)
 static void
 screenwin(void)
 {
-	Point p, q;
+	Point p;
 	char *greet;
 	Memimage *grey;
 
@@ -60,7 +59,6 @@ screenwin(void)
 	conscol = memblack;
 	memfillcolor(gscreen, 0x444488FF);
 	
-	w = memdefont->info[' '].width;
 	h = memdefont->height;
 
 	window.min = addpt(gscreen->r.min, Pt(20,20));
@@ -83,7 +81,6 @@ screenwin(void)
 
 	greet = " Plan 9 Console ";
 	p = addpt(window.min, Pt(10, 0));
-	q = memsubfontwidth(memdefont, greet);
 	memimagestring(gscreen, p, conscol, ZP, memdefont, greet);
 	window.min.y += h+6;
 	curpos = window.min;

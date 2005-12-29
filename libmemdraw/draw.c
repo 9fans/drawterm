@@ -308,9 +308,6 @@ drawclip(Memimage *dst, Rectangle *r, Memimage *src, Point *p0, Memimage *mask, 
  * Conversion tables.
  */
 static uchar replbit[1+8][256];		/* replbit[x][y] is the replication of the x-bit quantity y to 8-bit depth */
-static uchar conv18[256][8];		/* conv18[x][y] is the yth pixel in the depth-1 pixel x */
-static uchar conv28[256][4];		/* ... */
-static uchar conv48[256][2];
 
 /*
  * bitmap of how to replicate n bits to fill 8, for 1 ≤ n ≤ 8.
@@ -344,7 +341,7 @@ static int replmul[1+8] = {
 static void
 mktables(void)
 {
-	int i, j, mask, sh, small;
+	int i, j, small;
 		
 	if(tablesbuilt)
 		return;
@@ -361,17 +358,6 @@ mktables(void)
 		}
 	}
 
-	/* bit unpacking up to 8 bits, only powers of 2 */
-	for(i=0; i<256; i++){
-		for(j=0, sh=7, mask=1; j<8; j++, sh--)
-			conv18[i][j] = replbit[1][(i>>sh)&mask];
-
-		for(j=0, sh=6, mask=3; j<4; j++, sh-=2)
-			conv28[i][j] = replbit[2][(i>>sh)&mask];
-
-		for(j=0, sh=4, mask=15; j<2; j++, sh-=4)
-			conv48[i][j] = replbit[4][(i>>sh)&mask];
-	}
 }
 
 static uchar ones = 0xff;

@@ -1159,7 +1159,6 @@ long
 qbwrite(Queue *q, Block *b)
 {
 	int n, dowakeup;
-	Proc *p;
 
 	n = BLEN(b);
 
@@ -1222,10 +1221,11 @@ qbwrite(Queue *q, Block *b)
 
 	/* wakeup anyone consuming at the other end */
 	if(dowakeup){
-		p = wakeup(&q->rr);
+		wakeup(&q->rr);
 
 		/* if we just wokeup a higher priority process, let it run */
 	/*
+		p = wakeup(&q->rr);
 		if(p != nil && p->priority > up->priority)
 			sched();
 	 */
