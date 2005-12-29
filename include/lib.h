@@ -45,8 +45,8 @@ typedef p9_u32int mpdigit;
 #define uvlong	p9_uvlong
 
 #define	nelem(x)	(sizeof(x)/sizeof((x)[0]))
+#define SET(x)		((x)=0)
 #define	USED(x)		if(x);else
-#define	SET(x)
 
 enum
 {
