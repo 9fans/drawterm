@@ -23,6 +23,7 @@ SOURCE
 ------
 Use CVS: cvs -d :pserver:anoncvs@cvs.pdos.csail.mit.edu:/cvs co drawterm
 On the web at http://cvs.pdos.csail.mit.edu/cvs/drawterm
+In the Plan 9 distribution: /sys/src/cmd/unix/drawterm
 
 TO DO:
 ------
