@@ -11,10 +11,8 @@
  * ANY REPRESENTATION OR WARRANTY OF ANY KIND CONCERNING THE MERCHANTABILITY
  * OF THIS SOFTWARE OR ITS FITNESS FOR ANY PARTICULAR PURPOSE.
  */
-#include <stdarg.h>
-#include <string.h>
-#include "plan9.h"
-#include "fmt.h"
+#include <u.h>
+#include <libc.h>
 #include "fmtdef.h"
 
 /*
