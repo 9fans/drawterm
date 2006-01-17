@@ -5,8 +5,8 @@
  * same byte ordering.
  */
 
-#include "plan9.h"
-#include "fmt.h"
+#include <u.h>
+#include <libc.h>
 #include "fmtdef.h"
 
 #if defined (__APPLE__) || (__powerpc__)

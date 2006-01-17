@@ -332,7 +332,6 @@ __ifmt(Fmt *f)
 	isv = 0;
 	vu = 0;
 	u = 0;
-#ifndef PLAN9PORT
 	/*
 	 * Unsigned verbs for ANSI C
 	 */
@@ -346,7 +345,6 @@ __ifmt(Fmt *f)
 		fl &= ~(FmtSign|FmtSpace);
 		break;
 	}
-#endif
 	if(f->r == 'p'){
 		u = (ulong)va_arg(f->args, void*);
 		f->r = 'x';
