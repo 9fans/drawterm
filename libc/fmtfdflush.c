@@ -11,10 +11,9 @@
  * ANY REPRESENTATION OR WARRANTY OF ANY KIND CONCERNING THE MERCHANTABILITY
  * OF THIS SOFTWARE OR ITS FITNESS FOR ANY PARTICULAR PURPOSE.
  */
-#include <stdarg.h>
-#include <unistd.h>
-#include "plan9.h"
-#include "fmt.h"
+#include <inttypes.h>
+#include <u.h>
+#include <libc.h>
 #include "fmtdef.h"
 
 /*
@@ -27,7 +26,7 @@ __fmtFdFlush(Fmt *f)
 	int n;
 
 	n = (char*)f->to - (char*)f->start;
-	if(n && write((uintptr)f->farg, f->start, n) != n)
+	if(n && write((uintptr_t)f->farg, f->start, n) != n)
 		return 0;
 	f->to = f->start;
 	return 1;
