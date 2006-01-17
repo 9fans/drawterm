@@ -114,3 +114,4 @@ int          __strfmt(Fmt *f);
 #	define VA_END(a)
 #endif
 
+#define PLAN9PORT
