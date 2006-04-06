@@ -689,10 +689,12 @@ parseip(char *to, char *from)
 	memset(to, 0, 4);
 	for(i = 0; i < 4 && *p; i++){
 		to[i] = strtoul(p, &p, 10);
+		if(*p != '.' && *p != 0){
+			memset(to, 0, 4);
+			return 0;
+		}
 		if(*p == '.')
 			p++;
-		if(*p != '.' && *p != 0)
-			return 0;
 	}
 	switch(CLASS(to)){
 	case 0:	/* class A - 1 byte net */
