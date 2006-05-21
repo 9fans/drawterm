@@ -1411,7 +1411,7 @@ drawmesg(Client *client, void *av, int n)
 				scrn = dscrn->screen;
 				if(repl || chan!=scrn->image->chan)
 					error("image parameters incompatible with screen");
-				reffn = nil;
+				reffn = 0;
 				switch(refresh){
 				case Refbackup:
 					break;
@@ -1554,9 +1554,9 @@ drawmesg(Client *client, void *av, int n)
 			oy = BGLONG(a+41);
 			op = drawclientop(client);
 			/* high bit indicates arc angles are present */
-			if(ox & (1<<31)){
+			if(ox & (1U<<31)){
 				if((ox & (1<<30)) == 0)
-					ox &= ~(1<<31);
+					ox &= ~(1U<<31);
 				memarc(dst, p, e0, e1, c, src, sp, ox, oy, op);
 			}else
 				memellipse(dst, p, e0, e1, c, src, sp, op);
