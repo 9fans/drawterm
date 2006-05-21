@@ -6,6 +6,7 @@
 #include <pthread.h>
 #include <time.h>
 #include <sys/time.h>
+#include <sys/select.h>
 #include <signal.h>
 #include <pwd.h>
 #include <errno.h>

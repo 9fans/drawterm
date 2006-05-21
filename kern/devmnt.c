@@ -1037,7 +1037,7 @@ alloctag(void)
 
 	for(i = 0; i < NMASK; i++){
 		v = mntalloc.tagmask[i];
-		if(v == ~0UL)
+		if(v == ~0)
 			continue;
 		for(j = 0; j < 1<<TAGSHIFT; j++)
 			if((v & (1<<j)) == 0){
