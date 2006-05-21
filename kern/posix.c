@@ -213,3 +213,9 @@ ticks(void)
 	return (t.tv_sec-sec0)*1000+(t.tv_usec-usec0+500)/1000;
 }
 
+long
+showfilewrite(char *a, int n)
+{
+	error("not implemented");
+	return -1;
+}

@@ -464,6 +464,7 @@ enum{
 	Qrandom,
 	Qreboot,
 	Qsecstore,
+	Qshowfile,
 	Qsnarf,
 	Qswap,
 	Qsysname,
@@ -497,6 +498,7 @@ static Dirtab consdir[]={
 	"random",	{Qrandom},	0,		0444,
 	"reboot",	{Qreboot},	0,		0664,
 	"secstore",	{Qsecstore},	0,		0666,
+	"showfile",	{Qshowfile},	0,	0220,
 	"snarf",	{Qsnarf},		0,		0666,
 	"swap",		{Qswap},	0,		0664,
 	"sysname",	{Qsysname},	0,		0664,
@@ -914,6 +916,9 @@ conswrite(Chan *c, void *va, long n, vlong off)
 		secstoretab->qid.vers++;
 		memmove(secstorebuf+offset, va, n);
 		return n;
+
+	case Qshowfile:
+		return showfilewrite(a, n);
 
 	case Qsnarf:
 		if(offset >= SnarfSize || offset+n >= SnarfSize)
