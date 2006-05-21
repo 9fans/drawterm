@@ -6,8 +6,8 @@
 
 #include 	"keyboard.h"
 
-void	(*consdebug)(void) = nil;
-void	(*screenputs)(char*, int) = nil;
+void	(*consdebug)(void) = 0;
+void	(*screenputs)(char*, int) = 0;
 
 Queue*	kbdq;			/* unprocessed console input */
 Queue*	lineq;			/* processed console input */
@@ -86,7 +86,7 @@ return0(void *v)
 void
 printinit(void)
 {
-	lineq = qopen(2*1024, 0, nil, nil);
+	lineq = qopen(2*1024, 0, 0, nil);
 	if(lineq == nil)
 		panic("printinit");
 	qnoblock(lineq, 1);
@@ -332,14 +332,14 @@ echo(char *buf, int n)
 			pagersummary();
 			return;
 		case 'd':
-			if(consdebug == nil)
+			if(consdebug == 0)
 				consdebug = rdb;
 			else
-				consdebug = nil;
+				consdebug = 0;
 			print("consdebug now 0x%p\n", consdebug);
 			return;
 		case 'D':
-			if(consdebug == nil)
+			if(consdebug == 0)
 				consdebug = rdb;
 			consdebug();
 			return;
@@ -363,7 +363,7 @@ echo(char *buf, int n)
 	qproduce(kbdq, buf, n);
 	if(kbd.raw)
 		return;
-	if(screenputs != nil)
+	if(screenputs != 0)
 		echoscreen(buf, n);
 	if(serialoq)
 		echoserialoq(buf, n);

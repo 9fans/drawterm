@@ -236,7 +236,7 @@ struct Dirtab
 	char	name[KNAMELEN];
 	Qid	qid;
 	vlong length;
-	long	perm;
+	ulong	perm;
 };
 
 struct Walkqid

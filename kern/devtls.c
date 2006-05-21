@@ -467,7 +467,7 @@ tlsopen(Chan *c, int omode)
 			lock(&tr->hqlock);
 			if(tr->handq != nil)
 				error(Einuse);
-			tr->handq = qopen(2 * MaxCipherRecLen, 0, nil, nil);
+			tr->handq = qopen(2 * MaxCipherRecLen, 0, 0, nil);
 			if(tr->handq == nil)
 				error("cannot allocate handshake queue");
 			tr->hqref = 1;
