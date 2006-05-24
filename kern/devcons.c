@@ -141,7 +141,7 @@ putstrn0(char *str, int n, int usewrite)
 			qwrite(kprintoq, str, n);
 		else
 			qiwrite(kprintoq, str, n);
-	}else if(screenputs != nil)
+	}else if(screenputs != 0)
 		screenputs(str, n);
 }
 
@@ -1177,7 +1177,7 @@ iprint(char *fmt, ...)
 	va_start(arg, fmt);
 	n = vseprint(buf, buf+sizeof(buf), fmt, arg) - buf;
 	va_end(arg);
-	if(screenputs != nil && iprintscreenputs)
+	if(screenputs != 0 && iprintscreenputs)
 		screenputs(buf, n);
 #undef write
 	write(2, buf, n);
