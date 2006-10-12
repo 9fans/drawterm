@@ -220,9 +220,6 @@ mntversion(Chan *c, char *version, int msize, int returnlen)
 	m->msize = f.msize;
 	unlock(&mntalloc.lk);
 
-	poperror();	/* msg */
-	free(msg);
-
 	lock(&m->lk);
 	m->queue = 0;
 	m->rip = 0;
@@ -232,16 +229,19 @@ mntversion(Chan *c, char *version, int msize, int returnlen)
 	m->c = c;
 	unlock(&m->lk);
 
+	poperror();	/* msg */
 	poperror();	/* c */
 	qunlock(&c->umqlock);
 
 	k = strlen(f.version);
 	if(returnlen > 0){
-		if(returnlen < k)
+		if(returnlen < k){
+			free(msg);
 			error(Eshort);
+		}
 		memmove(version, f.version, k);
 	}
-
+	free(msg);
 	return k;
 }
 
