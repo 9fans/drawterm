@@ -196,7 +196,8 @@ mntversion(Chan *c, char *version, int msize, int returnlen)
 		error("server tries to increase msize in fversion");
 	if(f.msize<256 || f.msize>1024*1024)
 		error("nonsense value of msize in fversion");
-	if(strncmp(f.version, v, strlen(f.version)) != 0)
+	k = strlen(f.version);
+	if(strncmp(f.version, v, k) != 0)
 		error("bad 9P version returned from server");
 
 	/* now build Mnt associated with this connection */
@@ -220,7 +221,6 @@ mntversion(Chan *c, char *version, int msize, int returnlen)
 	m->msize = f.msize;
 	unlock(&mntalloc.lk);
 
-	k = strlen(f.version);
 	if(returnlen > 0){
 		if(returnlen < k)
 			error(Eshort);
@@ -242,7 +242,6 @@ mntversion(Chan *c, char *version, int msize, int returnlen)
 	poperror();	/* c */
 	qunlock(&c->umqlock);
 
-	free(msg);
 	return k;
 }
 
