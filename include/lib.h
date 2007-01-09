@@ -223,6 +223,10 @@ extern	Rune*	runevseprint(Rune*, Rune*, char*, va_list);
 extern	Rune*	runesmprint(char*, ...);
 extern	Rune*	runevsmprint(char*, va_list);
 
+extern       Rune*	runestrchr(Rune*, Rune);
+extern       long	runestrlen(Rune*);
+extern       Rune*	runestrstr(Rune*, Rune*);
+
 extern	int	fmtfdinit(Fmt*, int, char*, int);
 extern	int	fmtfdflush(Fmt*);
 extern	int	fmtstrinit(Fmt*);

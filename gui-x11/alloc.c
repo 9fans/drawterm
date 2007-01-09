@@ -17,6 +17,8 @@ xallocmemimage(Rectangle r, ulong chan, int pmid)
 	int d;
 	
 	m = _allocmemimage(r, chan);
+	if(m == nil)
+		return nil;
 	if(chan != GREY1 && chan != xscreenchan)
 		return m;
 
