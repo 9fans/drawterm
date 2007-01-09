@@ -49,6 +49,9 @@ OFILES=\
 	runesmprint.$O\
 	runesnprint.$O\
 	runesprint.$O\
+	runestrchr.$O\
+	runestrlen.$O\
+	runestrstr.$O\
 	runetype.$O\
 	runevseprint.$O\
 	runevsmprint.$O\
