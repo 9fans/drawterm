@@ -20,8 +20,8 @@ $(LIB): $(OFILES)
 	$(AS) -o $*.$O $*.s
 
 md5block.s: md5block.spp
-	gcc -E md5block.spp >md5block.s
+	gcc -E - < md5block.spp >md5block.s
 
 sha1block.s: sha1block.spp
-	gcc -E sha1block.spp >sha1block.s
+	gcc -E - < sha1block.spp >sha1block.s
 
