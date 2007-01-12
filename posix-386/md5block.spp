@@ -116,7 +116,7 @@
 	.text
 
 	.p2align 2,0x90
-#ifdef __Darwin__
+#ifdef __APPLE__
 	.globl __md5block
 	__md5block:
 #else
