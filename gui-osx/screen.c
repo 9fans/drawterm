@@ -226,7 +226,7 @@ static inline int convert_key(UInt32 key, UInt32 charcode)
 		case QZ_F11: return KF+11;
 		case QZ_F12: return KF+12;
 		case QZ_INSERT: return Kins;
-		case QZ_DELETE: return '0';
+		case QZ_DELETE: return 0x7F;
 		case QZ_HOME: return Khome;
 		case QZ_END: return Kend;
 		case QZ_KP_PLUS: return '+';
@@ -375,7 +375,7 @@ static OSStatus MainWindowEventHandler(EventHandlerCallRef nextHandler, EventRef
 			    int32_t wheeldelta;
 				GetEventParameter(event,kEventParamMouseWheelDelta,typeSInt32,
 									0,sizeof(EventMouseButton), 0, &wheeldelta);
-				sendbuttons((int16_t)wheeldelta>0 ? 8 : 16,
+				sendbuttons(wheeldelta>0 ? 8 : 16,
 							mousePos.h - winRect.left,
 							mousePos.v - winRect.top);
 				break;
