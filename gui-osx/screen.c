@@ -63,6 +63,8 @@ static CGRect bounds;
 static PasteboardRef appleclip;
 static _Rect winRect;
 
+Boolean altPressed = false;
+
 
 static int
 isready(void*a)
@@ -330,6 +332,8 @@ static OSStatus MainWindowEventHandler(EventHandlerCallRef nextHandler, EventRef
 	result = CallNextEventHandler(nextHandler, event);
 	UInt32 class = GetEventClass (event);
 	UInt32 kind = GetEventKind (event);
+	uint32_t mousebuttons = 0; // bitmask of buttons currently down
+
 	if(class == kEventClassKeyboard) {
 		char macCharCodes;
 		UInt32 macKeyCode;
@@ -343,20 +347,23 @@ static OSStatus MainWindowEventHandler(EventHandlerCallRef nextHandler, EventRef
 							sizeof(macKeyModifiers), NULL, &macKeyModifiers);
         switch(kind) {
 		case kEventRawKeyModifiersChanged:
-			if ( macKeyModifiers == 0x1800 ) leave_full_screen();
+			if (macKeyModifiers == (controlKey | optionKey)) leave_full_screen();
+
+			if(macKeyModifiers & optionKey) {
+				altPressed = true;
+			} else if(altPressed) {
+				kbdputc(kbdq, Kalt);
+				altPressed = false;
+			}
 			break;
 		case kEventRawKeyDown:
-		case kEventRawKeyRepeat: {
-			if(macKeyModifiers != 256) {
-				if (kind == kEventRawKeyRepeat || kind == kEventRawKeyDown) {
-					int key = convert_key(macKeyCode, macCharCodes);
-					if (key != -1) kbdputc(kbdq, key);
-				}
-			}
-			else
+		case kEventRawKeyRepeat:
+			if(macKeyModifiers != cmdKey) {
+				int key = convert_key(macKeyCode, macCharCodes);
+				if (key != -1) kbdputc(kbdq, key);
+			} else
 				result = eventNotHandledErr;
 			break;
-		}
 		default:
 			break;
 		}
@@ -367,14 +374,12 @@ static OSStatus MainWindowEventHandler(EventHandlerCallRef nextHandler, EventRef
 		GetEventParameter(event, kEventParamMouseLocation, typeQDPoint,
 							0, sizeof mousePos, 0, &mousePos);
 		
-		static uint32_t mousebuttons = 0; // bitmask of buttons currently down
-		
 		switch (kind) {
 			case kEventMouseWheelMoved:
 			{
 			    int32_t wheeldelta;
 				GetEventParameter(event,kEventParamMouseWheelDelta,typeSInt32,
-									0,sizeof(EventMouseButton), 0, &wheeldelta);
+									0,sizeof(wheeldelta), 0, &wheeldelta);
 				sendbuttons(wheeldelta>0 ? 8 : 16,
 							mousePos.h - winRect.left,
 							mousePos.v - winRect.top);
@@ -384,22 +389,33 @@ static OSStatus MainWindowEventHandler(EventHandlerCallRef nextHandler, EventRef
 			case kEventMouseDown:
 			{
 				uint32_t buttons;
+				uint32_t modifiers;
+				GetEventParameter(event, kEventParamKeyModifiers, typeUInt32, 
+									0, sizeof(modifiers), 0, &modifiers);
 				GetEventParameter(event, kEventParamMouseChord,
 					typeUInt32, 0, sizeof buttons, 0, &buttons);
-				mousebuttons = (buttons & 1)
-							 | ((buttons & 2)<<1)
-							 | ((buttons & 4)>>1);
+				/* simulate other buttons via alt/apple key. like x11 */
+				if(modifiers & optionKey) {
+					mousebuttons = ((buttons & 1) ? 2 : 0);
+					altPressed = false;
+				} else if(modifiers & cmdKey)
+					mousebuttons = ((buttons & 1) ? 4 : 0);
+				else
+					mousebuttons = (buttons & 1);
+
+				mousebuttons |= ((buttons & 2)<<1);
+				mousebuttons |= ((buttons & 4)>>1);
+
 			} /* Fallthrough */
 			case kEventMouseMoved:
 			case kEventMouseDragged:
-			{
 				sendbuttons(mousebuttons,
 							mousePos.h - winRect.left,
 							mousePos.v - winRect.top);
-			}
-			break;
-
-			default:result = eventNotHandledErr;break;
+				break;
+			default:
+				result = eventNotHandledErr;
+				break;
 		}
 	}
 	return result;
