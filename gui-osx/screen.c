@@ -335,8 +335,8 @@ static OSStatus MainWindowEventHandler(EventHandlerCallRef nextHandler, EventRef
 	UInt32 class = GetEventClass (event);
 	UInt32 kind = GetEventKind (event);
 	static uint32_t mousebuttons = 0; // bitmask of buttons currently down
-	static uint32_t mouseX = 0; // current mouse X position
-	static uint32_t mouseY = 0; // current mouse Y position
+	static uint32_t mouseX = 0; 
+	static uint32_t mouseY = 0; 
 
 	if(class == kEventClassKeyboard) {
 		char macCharCodes;
@@ -353,30 +353,55 @@ static OSStatus MainWindowEventHandler(EventHandlerCallRef nextHandler, EventRef
 		case kEventRawKeyModifiersChanged:
 			if (macKeyModifiers == (controlKey | optionKey)) leave_full_screen();
 
-			if(macKeyModifiers & optionKey) {
+			switch(macKeyModifiers & (optionKey | cmdKey)) {
+			case (optionKey | cmdKey):
+				/* due to chording we need to handle the case when both
+				 * modifier keys are pressed at the same time. 
+				 * currently it's only 2-3 snarf and the 3-2 noop
+				 */
 				altPressed = true;
-				if(mousebuttons & 1) {
+				if(mousebuttons & 1 || mousebuttons & 2 || mousebuttons & 4) {
+					mousebuttons |= 2;	/* set button 2 */
+					mousebuttons |= 4;	/* set button 3 */
+					button2 = true;
+					button3 = true;
+					sendbuttons(mousebuttons, mouseX, mouseY);
+				} 
+				break;
+			case optionKey:
+				altPressed = true;
+				if(mousebuttons & 1 || mousebuttons & 4) {
 					mousebuttons |= 2;	/* set button 2 */
 					button2 = true;
 					sendbuttons(mousebuttons, mouseX, mouseY);
-				}
-			} else if(macKeyModifiers & cmdKey) {
-				if(mousebuttons & 1) {
+				} 
+				break;
+			case cmdKey:
+				if(mousebuttons & 1 || mousebuttons & 2) {
 					mousebuttons |= 4;	/* set button 3 */
 					button3 = true;
 					sendbuttons(mousebuttons, mouseX, mouseY);
 				}
-			} else if(altPressed) {
-				kbdputc(kbdq, Kalt);
-				altPressed = false;
-			} else if(button2) {
-				mousebuttons &= ~2;	/* clear button 2 */
-				button2 = false;
-				sendbuttons(mousebuttons, mouseX, mouseY);
-			} else if(button3) {
-				mousebuttons &= ~4;	/* clear button 3 */
-				button3 = false;
-				sendbuttons(mousebuttons, mouseX, mouseY);
+				break;
+			case 0:
+			default:
+				if(button2 || button3) {
+					if(button2) {
+						mousebuttons &= ~2;	/* clear button 2 */
+						button2 = false;
+						altPressed = false;
+					} 
+					if(button3) {
+						mousebuttons &= ~4;	/* clear button 3 */
+						button3 = false;
+					}
+					sendbuttons(mousebuttons, mouseX, mouseY);
+				}
+				if(altPressed) {
+					kbdputc(kbdq, Kalt);
+					altPressed = false;
+				} 
+				break;
 			}
 			break;
 		case kEventRawKeyDown:
