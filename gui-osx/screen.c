@@ -629,7 +629,7 @@ clipread(void)
 				CFIndex length = CFDataGetLength(cfdata);
 				if (length > sizeof rsnarf) length = sizeof rsnarf;
 				CFDataGetBytes(cfdata, CFRangeMake(0, length), (uint8_t *)rsnarf);
-				snprint(snarf, sizeof snarf, "%S", rsnarf);
+				snprint(snarf, sizeof snarf, "%.*S", length, rsnarf);
 				char *s = snarf;
 				while (*s) {
 					if (*s == '\r') *s = '\n';
