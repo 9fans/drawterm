@@ -626,7 +626,7 @@ clipread(void)
 					fprint(2, "apple pasteboard CopyItem failed - Error %d\n", err);
 					return 0;
 				}
-				CFIndex length = CFDataGetLength(cfdata);
+				CFIndex length = CFDataGetLength(cfdata)/sizeof(Rune);
 				if (length > sizeof rsnarf) length = sizeof rsnarf;
 				CFDataGetBytes(cfdata, CFRangeMake(0, length), (uint8_t *)rsnarf);
 				snprint(snarf, sizeof snarf, "%.*S", length, rsnarf);
