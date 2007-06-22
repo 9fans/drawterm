@@ -1126,18 +1126,28 @@ if(0) iprint("xselect target=%d requestor=%d property=%d selection=%d\n",
 		XChangeProperty(xd, xe->requestor, xe->property, xe->target,
 			8, PropModeReplace, (uchar*)a, sizeof a);
 	}else if(xe->target == XA_STRING || xe->target == utf8string || xe->target == text || xe->target == compoundtext){
+	text:
 		/* if the target is STRING we're supposed to reply with Latin1 XXX */
 		qlock(&clip.lk);
 		XChangeProperty(xd, xe->requestor, xe->property, xe->target,
 			8, PropModeReplace, (uchar*)clip.buf, strlen(clip.buf));
 		qunlock(&clip.lk);
 	}else{
-		iprint("get %d\n", xe->target);
 		name = XGetAtomName(xd, xe->target);
 		if(name == nil)
-			iprint("XGetAtomName failed\n");
-		else if(strcmp(name, "TIMESTAMP") != 0)
-			iprint("%s: cannot handle selection request for '%s' (%d)\n", argv0, name, (int)xe->target);
+			iprint("XGetAtomName %d failed\n", xe->target);
+		if(name){
+			if(strcmp(name, "TIMESTAMP") == 0){
+				/* nothing */
+			}else if(strncmp(name, "image/", 6) == 0){
+				/* nothing */
+			}else if(strcmp(name, "text/html") == 0){
+				/* nothing */
+			}else if(strcmp(name, "text/plain") == 0 || strcmp(name, "text/plain;charset=UTF-8") == 0){
+				goto text;
+			}else
+				iprint("%s: cannot handle selection request for '%s' (%d)\n", argv0, name, (int)xe->target);
+		}
 		r.xselection.property = None;
 	}
 
