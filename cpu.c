@@ -623,7 +623,7 @@ p9any(int fd)
 	auth.id = 0;
 	convA2M(&auth, tbuf+TICKETLEN, t.key);
 
-	if(write(fd, tbuf+1, TICKETLEN+AUTHENTLEN) != TICKETLEN+AUTHENTLEN)
+	if(write(fd, tbuf, TICKETLEN+AUTHENTLEN) != TICKETLEN+AUTHENTLEN)
 		fatal(1, "cannot send ticket and authenticator back in p9sk1");
 
 	if((n=readn(fd, tbuf, AUTHENTLEN)) != AUTHENTLEN ||
