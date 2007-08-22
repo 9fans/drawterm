@@ -10,6 +10,7 @@
 #include <X11/keysym.h>
 
 #include "keysym2ucs.h"
+#include "glenda.xbm"
 
 /*
  * alias defs for image types to overcome name conflicts
@@ -287,6 +288,10 @@ xinitscreen(void)
 	XPixmapFormatValues *pfmt;
 	int n;
  
+	/* pixmap used to store the icon's image. */
+	Pixmap icon_pixmap;
+
+
 	xscreenid = 0;
 	xdrawable = 0;
 
@@ -391,6 +396,11 @@ xinitscreen(void)
 	xdrawable = XCreateWindow(xdisplay, rootwin, 0, 0, xsize, ysize, 0, 
 		xscreendepth, InputOutput, xvis, CWBackPixel|CWBorderPixel|CWColormap, &attrs);
 
+	/* load the given bitmap data and create an X pixmap containing it. */
+	icon_pixmap = XCreateBitmapFromData(xdisplay,
+		rootwin, (char *)icon_bitmap_bits,
+		icon_bitmap_width, icon_bitmap_height);
+
 	/*
 	 * set up property as required by ICCCM
 	 */
@@ -403,9 +413,11 @@ xinitscreen(void)
 	normalhints.max_height = Dy(r);
 	normalhints.width = xsize;
 	normalhints.height = ysize;
-	hints.flags = InputHint|StateHint;
+	hints.flags = IconPixmapHint |InputHint|StateHint;
 	hints.input = 1;
 	hints.initial_state = NormalState;
+	hints.icon_pixmap = icon_pixmap;
+
 	classhints.res_name = "drawterm";
 	classhints.res_class = "Drawterm";
 	argv[0] = "drawterm";
