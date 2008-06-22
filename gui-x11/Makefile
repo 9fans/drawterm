@@ -3,11 +3,7 @@ include ../Make.config
 LIB=libgui.a
 
 OFILES=\
-	alloc.$O\
-	cload.$O\
-	draw.$O\
-	load.$O\
-	screen.$O\
+	x11.$O\
 	keysym2ucs-x11.$O
 
 default: $(LIB)
