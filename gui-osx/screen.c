@@ -111,6 +111,8 @@ void screeninit(void)
 	ksleep(&rend, isready, 0);
 }
 
+// No wonder Apple sells so many wide displays!
+static OSStatus ApplicationQuitEventHandler(EventHandlerCallRef nextHandler, EventRef event, void *userData);
 static OSStatus MainWindowEventHandler(EventHandlerCallRef nextHandler, EventRef event, void *userData);
 static OSStatus MainWindowCommandHandler(EventHandlerCallRef nextHandler, EventRef event, void *userData);
 
@@ -165,6 +167,9 @@ void winproc(void *a)
 	if(PasteboardCreate(kPasteboardClipboard, &appleclip) != noErr)
 		sysfatal("pasteboard create failed");
 
+	const EventTypeSpec quit_events[] = {
+		{ kEventClassApplication, kEventAppQuit }
+	};
 	const EventTypeSpec commands[] = {
 		{ kEventClassWindow, kEventWindowClosed },
 		{ kEventClassWindow, kEventWindowBoundsChanged },
@@ -180,6 +185,13 @@ void winproc(void *a)
 		{ kEventClassMouse, kEventMouseDragged },
 		{ kEventClassMouse, kEventMouseWheelMoved },
 	};
+
+	InstallApplicationEventHandler (
+								NewEventHandlerUPP (ApplicationQuitEventHandler),
+								GetEventTypeCount(quit_events),
+								quit_events,
+								NULL,
+								NULL);
 
  	InstallApplicationEventHandler (
  								NewEventHandlerUPP (MainWindowEventHandler),
@@ -328,6 +340,14 @@ full_screen()
 	}
 }
 
+// catch quit events to handle quits from menu, Cmd+Q, applescript, and task switcher
+static OSStatus ApplicationQuitEventHandler(EventHandlerCallRef nextHandler, EventRef event, void *userData)
+{
+	exit(0);
+//	QuitApplicationEventLoop();
+	return noErr;
+}
+ 
 static OSStatus MainWindowEventHandler(EventHandlerCallRef nextHandler, EventRef event, void *userData)
 {
 	OSStatus result = noErr;
@@ -517,9 +537,21 @@ static OSStatus MainWindowCommandHandler(EventHandlerCallRef nextHandler,
 		switch (kind)
 		{
 			case kEventWindowClosed:
-				theWindow = NULL;
-				exit(0); // only one window
-				break;
+				// send a quit carbon event instead of directly calling cleanexit 
+				// so that all quits are done in ApplicationQuitEventHandler
+				{
+				EventRef quitEvent;
+				CreateEvent(NULL,
+							kEventClassApplication,
+							kEventAppQuit,
+							0,
+							kEventAttributeNone,
+							&quitEvent);
+				EventTargetRef target;
+				target = GetApplicationEventTarget();
+				SendEventToEventTarget(quitEvent, target);
+				}
+ 				break;
 
 			//resize window
 			case kEventWindowBoundsChanged:
