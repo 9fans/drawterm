@@ -144,9 +144,6 @@ void winproc(void *a)
 	AppendMenuItemTextWithCFString(viewMenu, CFSTR("Full Screen"), 0,
 			kFullScreenCmd, &index);
 	SetMenuItemCommandKey(viewMenu, index, 0, 'F');
-	AppendMenuItemTextWithCFString(viewMenu, CFSTR("ctrl-opt to return"), 
-			kMenuItemAttrDisabled,
-			kFullScreenCmd, &index);
 	InsertMenu(viewMenu, GetMenuID(windMenu));
 
 	DrawMenuBar();
