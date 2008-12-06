@@ -111,9 +111,7 @@ cpumain(int argc, char **argv)
 		close(fd);
 	}
 
-        user = getenv("USER");
-        if(user == nil)
-        	user = readcons("user", nil, 0);
+	user = getenv("USER");
 	secstoreserver = nil;
 	authserver = getenv("auth");
 	if(authserver == nil)
@@ -160,6 +158,9 @@ cpumain(int argc, char **argv)
 
 	if(argc != 0)
 		usage();
+
+	if(user == nil)
+		user = readcons("user", nil, 0);
 
 	if(mountfactotum() < 0){
 		if(secstoreserver == nil)
