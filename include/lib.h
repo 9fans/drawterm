@@ -121,7 +121,12 @@ extern	char*	utfrrune(char*, long);
 
 typedef struct Lock
 {
+#ifdef PTHREAD
+	int init;
+	pthread_mutex_t mutex;
+#else
 	long	key;
+#endif
 } Lock;
 
 typedef struct QLock

@@ -1,3 +1,4 @@
+#undef _FORTIFY_SOURCE	/* stupid ubuntu warnings */
 #define __BSD_VISIBLE 1 /* FreeBSD 5.x */
 #define _BSD_SOURCE 1
 #define _NETBSD_SOURCE 1	/* NetBSD */
@@ -24,7 +25,10 @@
 #include <inttypes.h>
 #include <ctype.h>
 #include <errno.h>
+#ifdef PTHREAD
+#include <pthread.h>
+#endif
 
 typedef long long		p9_vlong;
-typedef	unsigned long long p9_uvlong;
+typedef unsigned long long p9_uvlong;
 typedef uintptr_t uintptr;
