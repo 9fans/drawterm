@@ -1426,7 +1426,7 @@ _xgetsnarf(XDisplay *xd)
 	uchar *data, *xdata;
 	Atom clipboard, type, prop;
 	unsigned long lastlen;
-	uint dummy, len;
+	unsigned long dummy, len;
 	int fmt, i;
 	Window w;
 
