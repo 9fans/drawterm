@@ -1,0 +1,7 @@
+(^|/)CVS($|/)
+(^|/)\.hg($|/)
+(^|/)\.hgtags($|/)
+^drawterm.log$
+^state$
+^state.old$
+^state.journal$
