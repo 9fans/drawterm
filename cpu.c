@@ -29,6 +29,7 @@ static AuthInfo *p9any(int);
 static char	*system;
 static int	cflag;
 extern int	dbg;
+extern char*	base;	// fs base for devroot
 
 static char	*srvname = "ncpu";
 static char	*ealgs = "rc4_256 sha1";
@@ -146,11 +147,14 @@ cpumain(int argc, char **argv)
 	case 'k':
 		keyspec = EARGF(usage());
 		break;
-	case 'u':
-		user = EARGF(usage());
+	case 'r':
+		base = EARGF(usage());
 		break;
 	case 's':
 		secstoreserver = EARGF(usage());
+		break;
+	case 'u':
+		user = EARGF(usage());
 		break;
 	default:
 		usage();
