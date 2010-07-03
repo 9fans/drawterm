@@ -1198,6 +1198,20 @@ xkeyboard(XEvent *e)
 		case XK_Alt_R:
 			k = Kalt;
 			break;
+		case XK_F1:
+		case XK_F2:
+		case XK_F3:
+		case XK_F4:
+		case XK_F5:
+		case XK_F6:
+		case XK_F7:
+		case XK_F8:
+		case XK_F9:
+		case XK_F10:
+		case XK_F11:
+		case XK_F12:
+			k = KF|(k - XK_F1 + 1);
+			break;
 		case XK_Shift_L:
 		case XK_Shift_R:
 		case XK_Control_L:
