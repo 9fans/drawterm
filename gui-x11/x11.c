@@ -1572,8 +1572,8 @@ if(0) iprint("xselect target=%d requestor=%d property=%d selection=%d\n",
 		a[2] = text;
 		a[3] = compoundtext;
 
-		XChangeProperty(xd, xe->requestor, xe->property, xe->target,
-			8, PropModeReplace, (uchar*)a, sizeof a);
+		XChangeProperty(xd, xe->requestor, xe->property, XA_ATOM,
+			32, PropModeReplace, (uchar*)a, sizeof a);
 	}else if(xe->target == XA_STRING || xe->target == utf8string || xe->target == text || xe->target == compoundtext){
 	text:
 		/* if the target is STRING we're supposed to reply with Latin1 XXX */
