@@ -1,0 +1,9 @@
+# This file lists people who have contributed code to
+# drawterm, as recorded by the Mercurial and CVS logs.
+# The list is incomplete but a start.
+# My thanks to the people not listed here too.
+
+Andrey Mirtchovski
+Erik Quanstrom <quanstro@quanstro.net>
+Russ Cox <rsc@swtch.com>
+Yaroslav <yarikos@gmail.com>
