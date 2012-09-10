@@ -26,6 +26,18 @@ family(unsigned char *addr)
 	return AF_INET6;
 }
 
+static int
+addrlen(struct sockaddr_storage *ss)
+{
+	switch(ss->ss_family){
+	case AF_INET:
+		return sizeof(struct sockaddr_in);
+	case AF_INET6:
+		return sizeof(struct sockaddr_in6);
+	}
+	return 0;
+}
+
 void
 osipinit(void)
 {
@@ -84,7 +96,7 @@ so_connect(int fd, unsigned char *raddr, unsigned short rport)
 		break;
 	}
 
-	if(connect(fd, (struct sockaddr*)&ss, sizeof(ss)) < 0)
+	if(connect(fd, (struct sockaddr*)&ss, addrlen(&ss)) < 0)
 		oserror();
 }
 
@@ -172,7 +184,7 @@ so_bind(int fd, int su, unsigned short port, unsigned char *addr)
 				break;
 			}
 
-			if(bind(fd, (struct sockaddr*)&ss, sizeof(ss)) >= 0)	
+			if(bind(fd, (struct sockaddr*)&ss, addrlen(&ss)) >= 0)	
 				return;
 		}
 		oserror();
@@ -190,7 +202,7 @@ so_bind(int fd, int su, unsigned short port, unsigned char *addr)
 		break;
 	}
 
-	if(bind(fd, (struct sockaddr*)&ss, sizeof(ss)) < 0)
+	if(bind(fd, (struct sockaddr*)&ss, addrlen(&ss)) < 0)
 		oserror();
 }
 
