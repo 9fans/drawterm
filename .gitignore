@@ -1,0 +1,7 @@
+drawterm.log
+state
+state.old
+state.journal
+drawterm
+*.o
+*.a
