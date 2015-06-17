@@ -14,6 +14,7 @@
 #include <memdraw.h>
 #include "screen.h"
 #include "keyboard.h"
+#include "r16.h"
 
 Memimage	*gscreen;
 Screeninfo	screen;
@@ -544,14 +545,14 @@ setcolor(ulong index, ulong red, ulong green, ulong blue)
 uchar*
 clipreadunicode(HANDLE h)
 {
-	Rune *p;
+	Rune16 *p;
 	int n;
 	uchar *q;
-	
+
 	p = GlobalLock(h);
-	n = wstrutflen(p)+1;
+	n = rune16nlen(p, runes16len(p)+1);
 	q = malloc(n);
-	wstrtoutf(q, p, n);
+	runes16toutf(q, p, n);
 	GlobalUnlock(h);
 
 	return q;
@@ -598,7 +599,7 @@ clipwrite(char *buf)
 {
 	HANDLE h;
 	char *p, *e;
-	Rune *rp;
+	Rune16 *rp;
 	int n = strlen(buf);
 
 	if(!OpenClipboard(window)) {
@@ -616,11 +617,7 @@ clipwrite(char *buf)
 	if(h == NULL)
 		panic("out of memory");
 	rp = GlobalLock(h);
-	p = buf;
-	e = p+n;
-	while(p<e)
-		p += chartorune(rp++, p);
-	*rp = 0;
+	utftorunes16(rp, buf, n+1);
 	GlobalUnlock(h);
 
 	SetClipboardData(CF_UNICODETEXT, h);

@@ -7,7 +7,8 @@ OFILES=\
 	cload.$O\
 	draw.$O\
 	load.$O\
-	screen.$O
+	screen.$O\
+	r16.$O
 
 default: $(LIB)
 $(LIB): $(OFILES)
