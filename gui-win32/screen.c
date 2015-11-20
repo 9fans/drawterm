@@ -416,6 +416,18 @@ WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		case VK_DELETE:
 			kbdputc(kbdq, Kdel);
 			break;
+		case VK_HOME:
+			kbdputc(kbdq, Khome);
+			break;
+		case VK_END:
+			kbdputc(kbdq, Kend);
+			break;
+		case VK_PRIOR:
+			kbdputc(kbdq, Kpgup);
+			break;
+		case VK_NEXT:
+			kbdputc(kbdq, Kpgdown);
+			break;
 		case VK_UP:
 			kbdputc(kbdq, Kup);
 			break;
