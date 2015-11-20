@@ -330,6 +330,7 @@ WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	int i;
 	Rectangle r;
 
+	b = 0;
 	switch(msg) {
 	case WM_CREATE:
 		break;
@@ -354,7 +355,6 @@ WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	case WM_RBUTTONDOWN:
 		x = LOWORD(lparam);
 		y = HIWORD(lparam);
-		b = 0;
 		if(wparam & MK_LBUTTON)
 			b = 1;
 		if(wparam & MK_MBUTTON)
