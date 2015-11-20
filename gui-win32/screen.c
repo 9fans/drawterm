@@ -414,8 +414,7 @@ WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			kbdputc(kbdq, Kins);
 			break;
 		case VK_DELETE:
-//			kbdputc(kbdq, Kdel);
-			kbdputc(kbdq, 0x7f);	// should have Kdel in keyboard.h
+			kbdputc(kbdq, Kdel);
 			break;
 		case VK_UP:
 			kbdputc(kbdq, Kup);

@@ -23,6 +23,7 @@ extern	void			closekeyboard(Keyboardctl*);
 
 enum {
     KF= 0xF000, /* Rune: beginning of private Unicode space */
+    Kdel=   0x7F,
     Spec=   0xF800,
     /* KF|1, KF|2, ..., KF|0xC is F1, F2, ..., F12 */
     Khome=  KF|0x0D,
