@@ -17,7 +17,10 @@
 #define log2	liblog2
 #define log	liblog
 #define reboot	libreboot
+#ifdef strtoll
+#undef strtoll
 #define strtoll libstrtoll
+#endif
 #undef timeradd
 #define timeradd	xtimeradd
 
