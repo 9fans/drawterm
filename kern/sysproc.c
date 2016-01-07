@@ -5,7 +5,7 @@
 #include	"error.h"
 
 long
-sysexits(ulong *arg)
+sysexits(uintptr_t *arg)
 {
 	char *status;
 	char *inval = "invalid exit string";

@@ -2206,7 +2206,7 @@ DBG print("dp %p v %lux lm %ux (v ^ *dp) & lm %lux\n", dp, v, lm, (v^*dp)&lm);
 		case 16:
 			p[0] = v;		/* make little endian */
 			p[1] = v>>8;
-			v = *(ushort*)p;
+			v = *(ushort*)(void*)p;
 DBG print("dp=%p; dx=%d; for(y=0; y<%d; y++, dp+=%d)\nmemsets(dp, v, dx);\n",
 	dp, dx, dy, dwid);
 			for(y=0; y<dy; y++, dp+=dwid)
@@ -2221,7 +2221,7 @@ DBG print("dp=%p; dx=%d; for(y=0; y<%d; y++, dp+=%d)\nmemsets(dp, v, dx);\n",
 			p[1] = v>>8;
 			p[2] = v>>16;
 			p[3] = v>>24;
-			v = *(ulong*)p;
+			v = *(ulong*)(void*)p;
 			for(y=0; y<dy; y++, dp+=dwid)
 				memsetl(dp, v, dx);
 			return 1;
@@ -2452,7 +2452,7 @@ DBG print("bits %lux sh %d...", bits, i);
 			break;
 		case 16:
 			ws = (ushort*)wp;
-			v = *(ushort*)sp;
+			v = *(ushort*)(void*)sp;
 			for(x=bx; x>ex; x--, ws++){
 				i = x&7;
 				if(i == 8-1)
@@ -2478,7 +2478,7 @@ DBG print("bits %lux sh %d...", bits, i);
 			break;
 		case 32:
 			wl = (ulong*)wp;
-			v = *(ulong*)sp;
+			v = *(ulong*)(void*)sp;
 			for(x=bx; x>ex; x--, wl++){
 				i = x&7;
 				if(i == 8-1)

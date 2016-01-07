@@ -235,12 +235,10 @@ static long
 audiowrite(Chan *c, void *vp, long n, vlong off)
 {
 	long m;
-	int i, v, left, right, in, out;
+	int i, v, left, right, out;
 	Cmdbuf *cb;
-	char *a;
 
 	USED(off);
-	a = vp;
 	switch((ulong)c->qid.path) {
 	default:
 		error(Eperm);
@@ -250,7 +248,6 @@ audiowrite(Chan *c, void *vp, long n, vlong off)
 		v = Vaudio;
 		left = 1;
 		right = 1;
-		in = 1;
 		out = 1;
 		cb = parsecmd(vp, n);
 		if(waserror()){
@@ -278,7 +275,6 @@ audiowrite(Chan *c, void *vp, long n, vlong off)
 			for(m=0; volumes[m].name; m++) {
 				if(strcmp(cb->f[i], volumes[m].name) == 0) {
 					v = m;
-					in = 1;
 					out = 1;
 					left = 1;
 					right = 1;
@@ -291,12 +287,10 @@ audiowrite(Chan *c, void *vp, long n, vlong off)
 				goto cont0;
 			}
 			if(strcmp(cb->f[i], "in") == 0) {
-				in = 1;
 				out = 0;
 				goto cont0;
 			}
 			if(strcmp(cb->f[i], "out") == 0) {
-				in = 0;
 				out = 1;
 				goto cont0;
 			}
