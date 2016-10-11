@@ -39,6 +39,8 @@ static int readybit;
 static Rendez	rend;
 
 Point	ZP;
+uint windowStyle;
+const uint BORDERLESS = WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_THICKFRAME | WS_SYSMENU | WS_DLGFRAME | WS_CLIPSIBLINGS | WS_VISIBLE | WS_POPUP ^ WS_MINIMIZE | WS_MAXIMIZE;
 
 static int
 isready(void*a)
@@ -192,12 +194,12 @@ winproc(void *a)
 	wc.lpszMenuName = 0;
 	wc.lpszClassName = L"9pmgraphics";
 	RegisterClass(&wc);
-
+    windowStyle = WS_OVERLAPPEDWINDOW;
 	window = CreateWindowEx(
 		0,			/* extended style */
 		L"9pmgraphics",		/* class */
 		L"drawterm screen",		/* caption */
-		WS_OVERLAPPEDWINDOW,    /* style */
+		windowStyle,    /* style */
 		CW_USEDEFAULT,		/* init. x pos */
 		CW_USEDEFAULT,		/* init. y pos */
 		CW_USEDEFAULT,		/* init. x size */
@@ -440,6 +442,18 @@ WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		case VK_RIGHT:
 			kbdputc(kbdq, Kright);
 			break;
+        case VK_F11:
+            if (windowStyle == WS_OVERLAPPEDWINDOW)
+                windowStyle = BORDERLESS;
+            else
+                windowStyle = WS_OVERLAPPEDWINDOW;
+
+            SetWindowLongPtr(hwnd, -16, windowStyle);
+            ShowWindow(hwnd, SW_SHOWNORMAL);
+            RECT rcWnd;
+            GetWindowRect(hwnd,&rcWnd);
+            SetWindowPos(hwnd,(HWND)0,rcWnd.left,rcWnd.top,(rcWnd.right-rcWnd.left),(rcWnd.bottom-rcWnd.top),SWP_NOMOVE); //forces a refresh of the screen
+            ShowWindow(hwnd, SW_SHOWMAXIMIZED);
 		}
 		break;
 
