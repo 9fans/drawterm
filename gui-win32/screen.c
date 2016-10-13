@@ -194,7 +194,7 @@ winproc(void *a)
 	wc.lpszMenuName = 0;
 	wc.lpszClassName = L"9pmgraphics";
 	RegisterClass(&wc);
-    windowStyle = WS_OVERLAPPEDWINDOW;
+	windowStyle = WS_OVERLAPPEDWINDOW;
 	window = CreateWindowEx(
 		0,			/* extended style */
 		L"9pmgraphics",		/* class */
@@ -442,18 +442,18 @@ WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		case VK_RIGHT:
 			kbdputc(kbdq, Kright);
 			break;
-        case VK_F11:
-            if (windowStyle == WS_OVERLAPPEDWINDOW)
-                windowStyle = BORDERLESS;
-            else
-                windowStyle = WS_OVERLAPPEDWINDOW;
+		case VK_F11:
+			if (windowStyle == WS_OVERLAPPEDWINDOW)
+				windowStyle = BORDERLESS;
+			else
+				windowStyle = WS_OVERLAPPEDWINDOW;
 
-            SetWindowLongPtr(hwnd, -16, windowStyle);
-            ShowWindow(hwnd, SW_SHOWNORMAL);
-            RECT rcWnd;
-            GetWindowRect(hwnd,&rcWnd);
-            SetWindowPos(hwnd,(HWND)0,rcWnd.left,rcWnd.top,(rcWnd.right-rcWnd.left),(rcWnd.bottom-rcWnd.top),SWP_NOMOVE); //forces a refresh of the screen
-            ShowWindow(hwnd, SW_SHOWMAXIMIZED);
+			SetWindowLongPtr(hwnd, -16, windowStyle);
+			ShowWindow(hwnd, SW_SHOWNORMAL);
+			RECT rcWnd;
+			GetWindowRect(hwnd,&rcWnd);
+			SetWindowPos(hwnd,(HWND)0,rcWnd.left,rcWnd.top,(rcWnd.right-rcWnd.left),(rcWnd.bottom-rcWnd.top),SWP_NOMOVE); //forces a refresh of the screen
+			ShowWindow(hwnd, SW_SHOWMAXIMIZED);
 		}
 		break;
 
