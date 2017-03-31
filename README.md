@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/0intro/drawterm.svg?branch=master)](https://travis-ci.org/0intro/drawterm)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/drawterm/badge.svg)](https://scan.coverity.com/projects/drawterm)
+
 INSTALLATION
 --------------
 To build on Unix, run CONF=unix make.
