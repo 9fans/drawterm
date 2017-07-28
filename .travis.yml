@@ -1,2 +1,25 @@
 language: c
-script: CONF=unix make
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "XV94I8e37QmVwdIEXukEtvkq0PG15L53ZuZprr03HczsTAouILpn83uhDXtjV2srBIGIMKpJcUjRS0XcUV1CwWb9mEIkh8bJcyzWH+9BnQfJTrkq3D5odV/xUBWut54OlcSk6+nkq1yUMA0z5x+xJAwN3XxEIPLN+aTqezG6lMM9afVg80FMpFyoOUV7EybsUlbRygxbuy8APBsRkNfqIGRZRnYNg0HnQJh/WhfXrREPTsr/Cp8WlagU0VeG3BNT8ChhH4ysHQdKaIHVbMyg+PLmhsHCc3KObZSm76xCxd62+qPlosGiqQQEvuhZHBe+UW6cs2qTMBWRkW0Z/e2svKsyKqTNCm/INyQn6PHq1CMWgH26fR3MrYdBQ7+BrejjxBlAXQPUrdbNyES6ccTdhoUW/OQincGZaHalzedRWzH7Q+WW+tgELUjmV7iRcKeBw9npeM6n4LfqEE96P9Oqx/rVgZ2ov2G14GAKjtwy4BFdwYv/hyDK1GV+uqpdcFPr9WYrU6D/JRqvHpjnhumlGgsI4MqPtZYjSxJNy8M8lnk5urp7TyDy0BC4FcPRkvZH3eYZUr5Da/0HwjRIxonIBrVT7MzNy3GHZjl1mQ5Y/EuuOd5Nhy9Gq2i08xdfn5pp5VdT2/CLwwwoOC09VlNaK7/E48bo34AVBIkHfR/shPE="
+   - CONF=unix
+
+before_install:
+  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+addons:
+  coverity_scan:
+    project:
+      name: "0intro/drawterm"
+      description: "Build submitted via Travis CI"
+    notification_email: 0intro@gmail.com
+    build_command_prepend: "make clean"
+    build_command: "make"
+    branch_pattern: master
+
+script:
+  - make clean
+  - make
