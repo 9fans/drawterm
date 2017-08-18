@@ -58,7 +58,6 @@ mpnew(int n)
 	n = DIGITS(n);
 	if(n < mpmindigits)
 		n = mpmindigits;
-	n = n;
 	b->p = (mpdigit*)mallocz(n*Dbytes, 1);
 	if(b->p == nil)
 		sysfatal("mpnew: %r");

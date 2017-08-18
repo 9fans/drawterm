@@ -1466,7 +1466,6 @@ _xgetsnarf(XDisplay *xd)
 	 * If not, is there a clipboard selection?
 	 */
 	if(w == None && clipboard != None){
-		clipboard = clipboard;
 		w = XGetSelectionOwner(xd, clipboard);
 		if(w == xdrawable)
 			goto mine;
