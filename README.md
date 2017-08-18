@@ -20,22 +20,15 @@ I haven't tested the Windows build on Windows itself.
 I cross-compile using mingw32 on Linux.
 
 
-BINARIES
----------
-See http://swtch.com/drawterm/
-
-
 SOURCE
 ------
-Use Mercurial: hg clone http://code.swtch.com/drawterm
-On the web at http://code.swtch.com/drawterm
-Tar file at http://swtch.com/drawterm/
+Use Git: git clone https://github.com/0intro/drawterm
 In the Plan 9 distribution: /sys/src/cmd/unix/drawterm/ (sometimes out of date)
 
 
 HELP
 ----
-Issue tracker: http://code.swtch.com/drawterm/issues
+Issue tracker: https://github.com/0intro/drawterm/issues
 
 
 TO DO:
