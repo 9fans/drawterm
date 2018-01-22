@@ -438,6 +438,8 @@ fswstat(Chan *c, uchar *buf, int n)
 		strcpy(new, old);
 		p = strrchr(new, '/');
 		strcpy(p+1, d.name);
+		if(lstat(new, &stbuf) >= 0)
+			error(Eexist);
 		if(rename(old, new) < 0)
 			error(strerror(errno));
 	}
