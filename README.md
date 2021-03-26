@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/9fans/drawterm.svg?branch=master)](https://travis-ci.org/9fans/drawterm)
-[![Coverity Scan Build Status](https://scan.coverity.com/projects/drawterm/badge.svg)](https://scan.coverity.com/projects/drawterm)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/9fans-drawterm/badge.svg)](https://scan.coverity.com/projects/9fans-drawterm)
 
 INSTALLATION
 --------------

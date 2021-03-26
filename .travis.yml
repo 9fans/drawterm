@@ -4,7 +4,7 @@ env:
   global:
    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
    #   via the "travis encrypt" command using the project repo's public key
-   - secure: "XV94I8e37QmVwdIEXukEtvkq0PG15L53ZuZprr03HczsTAouILpn83uhDXtjV2srBIGIMKpJcUjRS0XcUV1CwWb9mEIkh8bJcyzWH+9BnQfJTrkq3D5odV/xUBWut54OlcSk6+nkq1yUMA0z5x+xJAwN3XxEIPLN+aTqezG6lMM9afVg80FMpFyoOUV7EybsUlbRygxbuy8APBsRkNfqIGRZRnYNg0HnQJh/WhfXrREPTsr/Cp8WlagU0VeG3BNT8ChhH4ysHQdKaIHVbMyg+PLmhsHCc3KObZSm76xCxd62+qPlosGiqQQEvuhZHBe+UW6cs2qTMBWRkW0Z/e2svKsyKqTNCm/INyQn6PHq1CMWgH26fR3MrYdBQ7+BrejjxBlAXQPUrdbNyES6ccTdhoUW/OQincGZaHalzedRWzH7Q+WW+tgELUjmV7iRcKeBw9npeM6n4LfqEE96P9Oqx/rVgZ2ov2G14GAKjtwy4BFdwYv/hyDK1GV+uqpdcFPr9WYrU6D/JRqvHpjnhumlGgsI4MqPtZYjSxJNy8M8lnk5urp7TyDy0BC4FcPRkvZH3eYZUr5Da/0HwjRIxonIBrVT7MzNy3GHZjl1mQ5Y/EuuOd5Nhy9Gq2i08xdfn5pp5VdT2/CLwwwoOC09VlNaK7/E48bo34AVBIkHfR/shPE="
+   - secure: "ITKHalWIMbsXZbQVoPwaW6wWjEtsYweC+jq3dedxjXXikJWIuMImnkla4GdN42kA/4RalOf5v+miPwrfpI/THSU6YpmbpNt6W9zPp118b1hKlRMbcvbKKKy9LFBR/WDfSuQ9k+AEorfHXqys7AorOXXulyvT/3XV1YS3tZBHQ9d8brCBX7uo4jgdVHEa2NkW3jGwbSBR06Tz1qu+saP80fmrjEeKrcCmCtm7Laossiw5K7b4xJq9kpjdgcPQbhfsvtm8IL8hpPGpbv8txBef/Q3daeaPvRGMv25KSVXsz/Ek+8RBitnXhwF2zI50BrbizUGDe5haHM0KO5Bf6FE5YB1SuslHhjMreI3NUIVWBLvvIdhOuPtSfC8nR1hU1NqP/OW5zZ3JY2I712pF7ZjX8G/ln7KjjD3uzgrLWyRZFFguWgRAxJcmfNSohnt4BYYYFkYmPYie32SBwfFBLyEbTUVxecAJU6djlhEDlIA0J1FX2qzGhhM4WFooa59RshmILagG7/7wBZtIbeaHuDZ3KLhosqtY3WGhZy/+laZzCW5zWmR6y4gRF2DNDU8VlEf9R8kQ1hjcx6deOAXAmKk4L55QqAI1l1pu2AMZ1dIHLV+LBw6hYpIC6yN6+hWRDvl2D3S2lhLBOjbmm4t5mhCNZ+yashiAh9MRPsKNle76EE4="
    - CONF=unix
 
 before_install:
@@ -13,7 +13,7 @@ before_install:
 addons:
   coverity_scan:
     project:
-      name: "0intro/drawterm"
+      name: "9fans/drawterm"
       description: "Build submitted via Travis CI"
     notification_email: 0intro@gmail.com
     build_command_prepend: "make clean"
