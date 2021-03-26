@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/0intro/drawterm.svg?branch=master)](https://travis-ci.org/0intro/drawterm)
+[![Build Status](https://travis-ci.org/9fans/drawterm.svg?branch=master)](https://travis-ci.org/9fans/drawterm)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/drawterm/badge.svg)](https://scan.coverity.com/projects/drawterm)
 
 INSTALLATION
@@ -22,13 +22,13 @@ I cross-compile using mingw32 on Linux.
 
 SOURCE
 ------
-Use Git: git clone https://github.com/0intro/drawterm
+Use Git: git clone https://github.com/9fans/drawterm
 In the Plan 9 distribution: /sys/src/cmd/unix/drawterm/ (sometimes out of date)
 
 
 HELP
 ----
-Issue tracker: https://github.com/0intro/drawterm/issues
+Issue tracker: https://github.com/9fans/drawterm/issues
 
 
 TO DO:
