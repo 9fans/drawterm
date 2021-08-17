@@ -1,0 +1,19 @@
+# AIX
+PTHREAD=-DPTHREAD
+AR=ar
+RANLIB=ranlib
+X11=/usr/X11R6
+CC=xlc_r
+CFLAGS=-I$(ROOT) -I$(ROOT)/include -I$(ROOT)/kern -c -I$(X11)/include -D_THREAD_SAFE $(PTHREAD) -O2 -DAIX -qmaxmem=-1 -qsuppress=1506-236 -qsuppress=1506-358 -qsuppress=1500-010 -g -qfullpath
+O=o
+OS=posix
+GUI=x11
+LDADD=-L$(X11)/lib64 -L$(X11)/lib -lX11
+LDFLAGS=$(PTHREAD)
+TARG=drawterm
+AUDIO=none
+
+all: default
+
+libmachdep.a:
+	(cd posix-port &&  make)
