@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/9fans/drawterm.svg?branch=master)](https://travis-ci.org/9fans/drawterm)
+[![Build Status](https://github.com/9fans/drawterm/workflows/C/badge.svg)](https://github.com/9fans/drawterm/actions/workflows/c.yml)
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/9fans-drawterm/badge.svg)](https://scan.coverity.com/projects/9fans-drawterm)
 
 INSTALLATION

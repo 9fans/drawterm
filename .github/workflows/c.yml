@@ -1,0 +1,19 @@
+name: C
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: make clean
+      run: CONF=unix make clean
+    - name: make
+      run: CONF=unix make
