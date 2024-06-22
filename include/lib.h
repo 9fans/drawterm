@@ -35,6 +35,7 @@ typedef signed char	p9_schar;
 typedef unsigned short	p9_ushort;
 typedef unsigned int	Rune;
 typedef unsigned int	p9_u32int;
+typedef unsigned long long p9_u64int;
 typedef p9_u32int mpdigit;
 
 /* make sure we don't conflict with predefined types */
@@ -43,6 +44,7 @@ typedef p9_u32int mpdigit;
 #define ushort	p9_ushort
 #define uint	p9_uint
 #define u32int	p9_u32int
+#define u64int	p9_u64int
 
 /* #define long int rather than p9_long so that "unsigned long" is valid */
 #define long	int
