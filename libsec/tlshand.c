@@ -17,7 +17,7 @@
 enum {
 	TLSFinishedLen = 12,
 	SSL3FinishedLen = MD5dlen+SHA1dlen,
-	MaxKeyData = 104,	// amount of secret we may need
+	MaxKeyData = 136,	// amount of secret we may need
 	MaxChunk = 1<<14,
 	RandomSize = 32,
 	SidSize = 32,
@@ -118,7 +118,7 @@ typedef struct Msg{
 
 typedef struct TlsSec{
 	char *server;	// name of remote; nil for server
-	int ok;	// <0 killed; ==0 in progress; >0 reusable
+	int ok;	// <0 killed; == 0 in progress; >0 reusable
 	RSApub *rsapub;
 	AuthRpc *rpc;	// factotum for rsa private key
 	uchar sec[MasterSecretSize];	// master secret
@@ -239,16 +239,18 @@ enum {
 };
 
 static Algs cipherAlgs[] = {
-	{"rc4_128", "md5",	2 * (16 + MD5dlen), TLS_RSA_WITH_RC4_128_MD5},
-	{"rc4_128", "sha1",	2 * (16 + SHA1dlen), TLS_RSA_WITH_RC4_128_SHA},
-	{"3des_ede_cbc","sha1",2*(4*8+SHA1dlen), TLS_RSA_WITH_3DES_EDE_CBC_SHA},
+	{"rc4_128", "md5", 2*(16+MD5dlen), TLS_RSA_WITH_RC4_128_MD5},
+	{"rc4_128", "sha1", 2*(16+SHA1dlen), TLS_RSA_WITH_RC4_128_SHA},
+	{"3des_ede_cbc", "sha1", 2*(4*8+SHA1dlen), TLS_RSA_WITH_3DES_EDE_CBC_SHA},
+	{"aes_128_cbc", "sha1", 2*(16+16+SHA1dlen), TLS_RSA_WITH_AES_128_CBC_SHA},
+	{"aes_256_cbc", "sha1", 2*(32+16+SHA1dlen), TLS_RSA_WITH_AES_256_CBC_SHA}
 };
 
 static uchar compressors[] = {
 	CompressionNull,
 };
 
-static TlsConnection *tlsServer2(int ctl, int hand, uchar *cert, int ncert, int (*trace)(char*fmt, ...));
+static TlsConnection *tlsServer2(int ctl, int hand, uchar *cert, int ncert, int (*trace)(char*fmt, ...), PEMChain *chain);
 static TlsConnection *tlsClient2(int ctl, int hand, uchar *csid, int ncsid, int (*trace)(char*fmt, ...));
 
 static void	msgClear(Msg *m);
@@ -337,7 +339,7 @@ tlsServer(int fd, TLSconn *conn)
 		return -1;
 	}
 	fprint(ctl, "fd %d 0x%x", fd, ProtocolVersion);
-	tls = tlsServer2(ctl, hand, conn->cert, conn->certlen, conn->trace);
+	tls = tlsServer2(ctl, hand, conn->cert, conn->certlen, conn->trace, conn->chain);
 	sprint(dname, "#a/tls/%s/data", buf);
 	data = open(dname, ORDWR);
 	close(fd);
@@ -357,6 +359,8 @@ tlsServer(int fd, TLSconn *conn)
 	conn->sessionIDlen = tls->sid->len;
 	conn->sessionID = emalloc(conn->sessionIDlen);
 	memcpy(conn->sessionID, tls->sid->data, conn->sessionIDlen);
+	if(conn->sessionKey != nil && conn->sessionType != nil && strcmp(conn->sessionType, "ttls") == 0)
+		tls->sec->prf(conn->sessionKey, conn->sessionKeylen, tls->sec->sec, MasterSecretSize, conn->sessionConst,  tls->sec->crandom, RandomSize, tls->sec->srandom, RandomSize);
 	tlsConnectionFree(tls);
 	return data;
 }
@@ -408,19 +412,33 @@ tlsClient(int fd, TLSconn *conn)
 	conn->sessionIDlen = tls->sid->len;
 	conn->sessionID = emalloc(conn->sessionIDlen);
 	memcpy(conn->sessionID, tls->sid->data, conn->sessionIDlen);
+	if(conn->sessionKey != nil && conn->sessionType != nil && strcmp(conn->sessionType, "ttls") == 0)
+		tls->sec->prf(conn->sessionKey, conn->sessionKeylen, tls->sec->sec, MasterSecretSize, conn->sessionConst,  tls->sec->crandom, RandomSize, tls->sec->srandom, RandomSize);
 	tlsConnectionFree(tls);
 	return data;
 }
 
+static int
+countchain(PEMChain *p)
+{
+	int i = 0;
+
+	while (p) {
+		i++;
+		p = p->next;
+	}
+	return i;
+}
+
 static TlsConnection *
-tlsServer2(int ctl, int hand, uchar *cert, int ncert, int (*trace)(char*fmt, ...))
+tlsServer2(int ctl, int hand, uchar *cert, int ncert, int (*trace)(char*fmt, ...), PEMChain *chp)
 {
 	TlsConnection *c;
 	Msg m;
 	Bytes *csid;
 	uchar sid[SidSize], kd[MaxKeyData];
 	char *secrets;
-	int cipher, compressor, nsid, rv;
+	int cipher, compressor, nsid, rv, numcerts, i;
 
 	if(trace)
 		trace("tlsServer2\n");
@@ -498,9 +516,12 @@ tlsServer2(int ctl, int hand, uchar *cert, int ncert, int (*trace)(char*fmt, ...
 	msgClear(&m);
 
 	m.tag = HCertificate;
-	m.u.certificate.ncert = 1;
+	numcerts = countchain(chp);
+	m.u.certificate.ncert = 1 + numcerts;
 	m.u.certificate.certs = emalloc(m.u.certificate.ncert * sizeof(Bytes));
 	m.u.certificate.certs[0] = makebytes(cert, ncert);
+	for (i = 0; i < numcerts && chp; i++, chp = chp->next)
+		m.u.certificate.certs[i+1] = makebytes(chp->pem, chp->pemlen);
 	if(!msgSend(c, &m, AQueue))
 		goto Err;
 	msgClear(&m);
@@ -1116,18 +1137,23 @@ msgRecv(TlsConnection *c, Msg *m)
 		}
 		break;
 	case HCertificateRequest:
+		if(n < 1)
+			goto Short;
+		nn = p[0];
+		p += 1;
+		n -= 1;
+		if(nn < 1 || nn > n)
+			goto Short;
+		m->u.certificateRequest.types = makebytes(p, nn);
+		p += nn;
+		n -= nn;
 		if(n < 2)
 			goto Short;
 		nn = get16(p);
 		p += 2;
 		n -= 2;
-		if(nn < 1 || nn > n)
-			goto Short;
-		m->u.certificateRequest.types = makebytes(p, nn);
-		nn = get24(p);
-		p += 3;
-		n -= 3;
-		if(nn == 0 || n != nn)
+		/* nn == 0 can happen; yahoo's servers do it */
+		if(nn != n)
 			goto Short;
 		/* cas */
 		i = 0;
@@ -1140,7 +1166,8 @@ msgRecv(TlsConnection *c, Msg *m)
 			if(nn < 1 || nn > n)
 				goto Short;
 			m->u.certificateRequest.nca = i+1;
-			m->u.certificateRequest.cas = erealloc(m->u.certificateRequest.cas, (i+1)*sizeof(Bytes));
+			m->u.certificateRequest.cas = erealloc(
+				m->u.certificateRequest.cas, (i+1)*sizeof(Bytes));
 			m->u.certificateRequest.cas[i] = makebytes(p, nn);
 			p += nn;
 			n -= nn;
@@ -1181,8 +1208,10 @@ msgRecv(TlsConnection *c, Msg *m)
 		goto Short;
 Ok:
 	if(c->trace){
-		char buf[8000];
-		c->trace("recv %s", msgPrint(buf, sizeof buf, m));
+		char *buf;
+		buf = emalloc(8000);
+		c->trace("recv %s", msgPrint(buf, 8000, m));
+		free(buf);
 	}
 	return 1;
 Short:
@@ -2043,9 +2072,12 @@ mptobytes(mpint* big)
 	uchar *a;
 	Bytes* ans;
 
+	a = nil;
 	n = (mpsignif(big)+7)/8;
 	m = mptobe(big, nil, n, &a);
 	ans = makebytes(a, m);
+	if(a != nil)
+		free(a);
 	return ans;
 }
 
@@ -2223,8 +2255,7 @@ get16(uchar *p)
 	return (p[0]<<8)|p[1];
 }
 
-/* ANSI offsetof() */
-#define OFFSET(x, s) ((int)(&(((s*)0)->x)))
+#define OFFSET(x, s) offsetof(s, x)
 
 /*
  * malloc and return a new Bytes structure capable of

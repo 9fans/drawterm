@@ -46,6 +46,10 @@ OFILES=\
 	rsaprivtopub.$O\
 	sha1.$O\
 	sha1pickle.$O\
+	sha2_64.$O\
+	sha2block64.$O\
+	sha2_128.$O\
+	sha2block128.$O\
 	smallprimes.$O
 
 default: $(LIB)
