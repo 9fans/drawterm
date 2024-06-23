@@ -51,7 +51,7 @@ OFILES=\
 	sha2block64.$O\
 	sha2_128.$O\
 	sha2block128.$O\
-	smallprimes.$O
+	smallprimes.$O\
 
 default: $(LIB)
 $(LIB): $(OFILES)
