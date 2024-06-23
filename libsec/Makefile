@@ -53,6 +53,7 @@ OFILES=\
 	sha2block128.$O\
 	smallprimes.$O\
 	pbkdf2.$O\
+	hkdf.$O\
 
 default: $(LIB)
 $(LIB): $(OFILES)
