@@ -7,9 +7,6 @@
 #define MININT (MAXINT+1)
 
 // for converting between vlongs's and mpint's
-// #define MAXUVLONG (~0ULL)
-// #define MAXVLONG (MAXUVLONG>>1)
-// #define MINVLONG (MAXVLONG+1ULL)
-#define MAXUVLONG ((uvlong) ~0)
+#define MAXUVLONG (~0ULL)
 #define MAXVLONG (MAXUVLONG>>1)
-#define MINVLONG (MAXVLONG+((uvlong) 1))
+#define MINVLONG (MAXVLONG+1ULL)

@@ -41,7 +41,7 @@ mptov(mpint *b)
 	int s;
 
 	if(b->top == 0)
-		return (vlong) 0;
+		return 0LL;
 
 	mpnorm(b);
 	if(b->top > VLDIGITS){
@@ -51,7 +51,7 @@ mptov(mpint *b)
 			return (vlong)MINVLONG;
 	}
 
-	v = (uvlong) 0;
+	v = 0ULL;
 	for(s = 0; s < b->top; s++)
 		v |= b->p[s]<<(s*sizeof(mpdigit)*8);
 
