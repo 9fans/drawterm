@@ -30,6 +30,7 @@
 typedef unsigned char	p9_uchar;
 typedef unsigned int	p9_uint;
 typedef unsigned int	p9_ulong;
+typedef unsigned long	p9_usize;
 typedef int		p9_long;
 typedef signed char	p9_schar;
 typedef unsigned short	p9_ushort;
@@ -49,6 +50,7 @@ typedef p9_u32int mpdigit;
 /* #define long int rather than p9_long so that "unsigned long" is valid */
 #define long	int
 #define ulong	p9_ulong
+#define usize	p9_usize
 #define vlong	p9_vlong
 #define uvlong	p9_uvlong
 
