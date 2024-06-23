@@ -11,6 +11,7 @@ OFILES=\
 	mpadd.$O\
 	mpaux.$O\
 	mpcmp.$O\
+	mpfactorial.$O\
 	mpdigdiv.$O\
 	mpdiv.$O\
 	mpeuclid.$O\

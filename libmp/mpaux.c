@@ -41,6 +41,8 @@ static int mpmindigits = 33;
 void
 mpsetminbits(int n)
 {
+	if(n < 0)
+		sysfatal("mpsetminbits: n < 0");
 	if(n == 0)
 		n = 1;
 	mpmindigits = DIGITS(n);
@@ -52,7 +54,11 @@ mpnew(int n)
 {
 	mpint *b;
 
+	if(n < 0)
+		sysfatal("mpsetminbits: n < 0");
+
 	b = mallocz(sizeof(mpint), 1);
+	setmalloctag(b, getcallerpc(&n));
 	if(b == nil)
 		sysfatal("mpnew: %r");
 	n = DIGITS(n);
@@ -96,7 +102,7 @@ mpfree(mpint *b)
 		return;
 	if(b->flags & MPstatic)
 		sysfatal("freeing mp constant");
-	memset(b->p, 0, b->top*Dbytes);	// information hiding
+	memset(b->p, 0, b->size*Dbytes);	// information hiding
 	free(b->p);
 	free(b);
 }
