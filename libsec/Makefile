@@ -5,6 +5,7 @@ LIB=libsec.a
 OFILES=\
 	aes.$O\
 	blowfish.$O\
+	chacha.$O\
 	decodepem.$O\
 	des.$O\
 	des3CBC.$O\
