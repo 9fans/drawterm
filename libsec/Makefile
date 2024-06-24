@@ -54,6 +54,7 @@ OFILES=\
 	smallprimes.$O\
 	pbkdf2.$O\
 	hkdf.$O\
+	poly1305.$O\
 
 default: $(LIB)
 $(LIB): $(OFILES)
