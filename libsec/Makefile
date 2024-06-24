@@ -55,6 +55,8 @@ OFILES=\
 	pbkdf2.$O\
 	hkdf.$O\
 	poly1305.$O\
+	ccpoly.$O\
+	tsmemcmp.$O\
 
 default: $(LIB)
 $(LIB): $(OFILES)
