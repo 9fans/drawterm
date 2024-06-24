@@ -52,6 +52,11 @@ OFILES=\
 	sha2_128.$O\
 	sha2block128.$O\
 	smallprimes.$O\
+	pbkdf2.$O\
+	hkdf.$O\
+	poly1305.$O\
+	ccpoly.$O\
+	tsmemcmp.$O\
 
 default: $(LIB)
 $(LIB): $(OFILES)
