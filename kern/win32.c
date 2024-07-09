@@ -287,7 +287,7 @@ WinMain(HINSTANCE x, HINSTANCE y, LPSTR z, int w)
 	Rune *warg;
 
 	if(0 && win_hasunicode()){
-		warg = GetCommandLineW();
+		warg = (Rune*)GetCommandLineW();
 		n = (wstrlen(warg)+1)*UTFmax;
 		arg = malloc(n);
 		wstrtoutf(arg, warg, n);
@@ -465,6 +465,6 @@ showfilewrite(char *a, int n)
 		action = Lopen;
 		arg = cmd;
 	}
-	ShellExecute(0, 0, action, arg, 0, SW_SHOWNORMAL);
+	ShellExecute(0, 0, (LPCWSTR)action, (LPCWSTR)arg, 0, SW_SHOWNORMAL);
 	return n;
 }
