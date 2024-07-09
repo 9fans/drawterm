@@ -626,7 +626,7 @@ int
 clipwrite(char *buf)
 {
 	HANDLE h;
-	char *p, *e;
+	char *p;
 	Rune16 *rp;
 	int n = strlen(buf);
 
