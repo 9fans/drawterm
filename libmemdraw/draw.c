@@ -101,7 +101,7 @@ _memimagedrawsetup(Memimage *dst, Rectangle r, Memimage *src, Point p0, Memimage
 	if(mask == nil)
 		mask = memopaque;
 
-DBG	print("memimagedraw %p/%luX %R @ %p %p/%luX %P %p/%luX %P... ", dst, dst->chan, r, dst->data->bdata, src, src->chan, p0, mask, mask->chan, p1);
+DBG print("memimagedraw %p/%luX %R @ %p %p/%luX %P %p/%luX %P... ", dst, dst->chan, r, dst->data->bdata, src, src->chan, p0, mask, mask->chan, p1);
 
 	if(drawclip(dst, &r, src, &p0, mask, &p1, &par.sr, &par.mr) == 0){
 //		if(drawdebug)
@@ -776,9 +776,9 @@ DBG print("[");
 		bmask = rdmask(&mpar, mpar.bufbase, masky);
 DBG print("]\n");
 		bdst = rddst(&dpar, dpar.bufbase, dsty);
-DBG		dumpbuf("src", bsrc, dx);
-DBG		dumpbuf("mask", bmask, dx);
-DBG		dumpbuf("dst", bdst, dx);
+DBG dumpbuf("src", bsrc, dx);
+DBG dumpbuf("mask", bmask, dx);
+DBG dumpbuf("dst", bdst, dx);
 		bdst = calc(bdst, bsrc, bmask, dx, isgrey, op);
 		wrdst(&dpar, dpar.bytermin+dsty*dpar.bwidth, bdst);
 	}
