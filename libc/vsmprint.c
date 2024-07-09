@@ -6,23 +6,24 @@ static int
 fmtStrFlush(Fmt *f)
 {
 	char *s;
-	int n;
+	int n, d;
 
 	if(f->start == nil)
 		return 0;
 	n = (uintptr)f->farg;
 	n *= 2;
-	s = (char*)f->start;
-	f->start = realloc(s, n);
-	if(f->start == nil){
+	d = (char*)f->to - (char*)f->start;
+	s = realloc(f->start, n);
+	if(s == nil){
 		f->farg = nil;
 		f->to = nil;
 		f->stop = nil;
-		free(s);
+		free(f->start);
 		return 0;
 	}
+	f->start = s;
 	f->farg = (void*)(uintptr)n;
-	f->to = (char*)f->start + ((char*)f->to - s);
+	f->to = (char*)f->start + d;
 	f->stop = (char*)f->start + n - 1;
 	return 1;
 }
