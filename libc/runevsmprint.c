@@ -6,23 +6,24 @@ static int
 runeFmtStrFlush(Fmt *f)
 {
 	Rune *s;
-	int n;
+	int n, d;
 
 	if(f->start == nil)
 		return 0;
 	n = (uintptr)f->farg;
 	n *= 2;
-	s = (Rune*)f->start;
-	f->start = realloc(s, sizeof(Rune)*n);
-	if(f->start == nil){
+	d = (Rune*)f->to - (Rune*)f->start;
+	s = realloc(f->start, sizeof(Rune)*n);
+	if(s == nil){
 		f->farg = nil;
 		f->to = nil;
 		f->stop = nil;
-		free(s);
+		free(f->start);
 		return 0;
 	}
+	f->start = s;
 	f->farg = (void*)(uintptr)n;
-	f->to = (Rune*)f->start + ((Rune*)f->to - s);
+	f->to = (Rune*)f->start + d;
 	f->stop = (Rune*)f->start + n - 1;
 	return 1;
 }
