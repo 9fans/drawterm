@@ -14,7 +14,7 @@ opasstokey(char *key, char *p)
 		return 0;
 	if(n > 10)
 		n = 10;
-	strncpy((char*)t, p, n);
+	memcpy((char*)t, p, n);
 	if(n >= 9){
 		c = p[8] & 0xf;
 		if(n == 10)
