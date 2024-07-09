@@ -59,7 +59,7 @@ runes16toutf(char *p, Rune16 *r, int nc)
 
 	op = p;
 	ep = p + nc;
-	while(c = *r++) {
+	while((c = *r++)) {
 		n = 1;
 		if(c >= Runeself)
 			n = runelen(c);
