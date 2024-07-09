@@ -9,3 +9,4 @@ Rune16*	runes16dup(Rune16*);
 Rune16*	utftorunes16(Rune16*, char*, int);
 char*	runes16toutf(char*, Rune16*, int);
 int		runes16cmp(Rune16*, Rune16*);
+void*	smalloc(ulong);
