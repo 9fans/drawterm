@@ -104,12 +104,17 @@ struct Chachastate
 		};
 	};
 	int	rounds;
+	int	ivwords;
 };
 
-void	setupChachastate(Chachastate*, uchar*, usize, uchar*, int);
-void	chacha_setblock(Chachastate*, u32int);
+void	setupChachastate(Chachastate*, uchar*, usize, uchar*, ulong, int);
+void	chacha_setiv(Chachastate *, uchar*);
+void	chacha_setblock(Chachastate*, u64int);
 void	chacha_encrypt(uchar*, usize, Chachastate*);
 void	chacha_encrypt2(uchar*, uchar*, usize, Chachastate*);
+
+void	ccpoly_encrypt(uchar *dat, ulong ndat, uchar *aad, ulong naad, uchar tag[16], Chachastate *cs);
+int	ccpoly_decrypt(uchar *dat, ulong ndat, uchar *aad, ulong naad, uchar tag[16], Chachastate *cs);
 
 /*
  * DES definitions
@@ -183,6 +188,7 @@ enum
 	MD4dlen=	16,	/* MD4 digest length */
 	MD5dlen=	16,	/* MD5 digest length */
 	AESdlen=	16,	/* TODO: see rfc */
+	Poly1305dlen=	16,	/* Poly1305 digest length */
 
 	Hmacblksz	= 64,	/* in bytes; from rfc2104 */
 };
@@ -192,7 +198,7 @@ struct DigestState
 {
 	uvlong	len;
 	union {
-		u32int	state[8];
+		u32int	state[16];
 		u64int	bstate[8];
 	};
 	uchar	buf[256];
@@ -233,6 +239,8 @@ char*		md5pickle(MD5state*);
 MD5state*	md5unpickle(char*);
 char*		sha1pickle(SHA1state*);
 SHA1state*	sha1unpickle(char*);
+
+DigestState*	poly1305(uchar*, ulong, uchar*, ulong, uchar*, DigestState*);
 
 /*
  * random number generation
@@ -440,3 +448,14 @@ int	okThumbprint(uchar *sha1, Thumbprint *ok);
 /* readcert.c */
 uchar	*readcert(char *filename, int *pcertlen);
 PEMChain*readcertchain(char *filename);
+
+/* password-based key derivation function 2 (rfc2898) */
+void pbkdf2_x(uchar *p, ulong plen, uchar *s, ulong slen, ulong rounds, uchar *d, ulong dlen,
+	DigestState* (*x)(uchar*, ulong, uchar*, ulong, uchar*, DigestState*), int xlen);
+
+/* hmac-based key derivation function (rfc5869) */
+void hkdf_x(uchar *salt, ulong nsalt, uchar *info, ulong ninfo, uchar *key, ulong nkey, uchar *d, ulong dlen,
+	DigestState* (*x)(uchar*, ulong, uchar*, ulong, uchar*, DigestState*), int xlen);
+
+/* timing safe memcmp() */
+int tsmemcmp(void*, void*, ulong);
