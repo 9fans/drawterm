@@ -8,12 +8,19 @@ on:
 
 jobs:
   build:
+    strategy:
+      fail-fast: false
+      matrix:
+        conf: [unix, win32]
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+    - name: install build deps
+      if: matrix.conf == 'win32'
+      run: sudo apt-get install -y gcc-mingw-w64
     - name: make clean
-      run: CONF=unix make clean
+      run: CONF=${{ matrix.conf }} make clean
     - name: make
-      run: CONF=unix make
+      run: CONF=${{ matrix.conf }} make
