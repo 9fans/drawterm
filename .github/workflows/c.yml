@@ -12,7 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v7
+    - name: install dependencies
+      run: sudo apt install libx11-dev libxt-dev
     - name: make clean
       run: CONF=unix make clean
     - name: make
