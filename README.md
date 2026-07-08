@@ -7,7 +7,7 @@ To build on Unix, run CONF=unix make.
 
 To build on Solaris using Sun cc, run CONF=sun make.
 
-To build on Windows, you need Mingw.  See http://www.mingw.org.
+To build on Windows, you need Mingw.  See https://www.mingw-w64.org/.
 Edit Make.config to uncomment the Windows section
 and comment out the rest.  Then run CONF=win32 make.
 
