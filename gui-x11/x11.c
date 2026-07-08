@@ -10,11 +10,14 @@
 #include <cursor.h>
 #include "screen.h"
 
+#include <termios.h>
+
 #define argv0 "drawterm"
 
 typedef struct Cursor Cursor;
 
 #undef	long
+#undef	ulong
 #define	Font		XFont
 #define	Screen	XScreen
 #define	Display	XDisplay
@@ -33,6 +36,7 @@ typedef struct Cursor Cursor;
 #undef	Display
 #undef	Cursor
 #define	long	int
+#define ulong p9_ulong
 
 /* perfect approximation to NTSC = .299r+.587g+.114b when 0 ≤ r,g,b < 256 */
 #define RGB2K(r,g,b)	((156763*(r)+307758*(g)+59769*(b))>>19)
